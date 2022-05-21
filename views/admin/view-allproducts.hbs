@@ -1,0 +1,135 @@
+{{! layout}}
+<!DOCTYPE html>
+<!-- Designined by CodingLab | www.youtube.com/codinglabyt -->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <!--<title> Responsiive Admin Dashboard | CodingLab </title>-->
+   
+    <!-- Boxicons CDN Link -->
+    
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+   </head>
+<body>
+  <div class="sidebar">
+    <div class="logo-details">
+    
+      <span class="logo_name ms-5">ADMIN</span>
+    </div>
+      <ul class="nav-links">
+        <li>
+          <a href="/admin/admin-home" >
+            <i class='bx bx-grid-alt' ></i>
+            <span class="links_name">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="/admin/view-allproducts" class="active">
+            <i class='bx bx-box' ></i>
+            <span class="links_name">All Products</span>
+          </a>
+        </li>
+        <li>
+          <a href="/admin/all-users">
+            <i class='bx bx-list-ul' ></i>
+            <span class="links_name">All Users</span>
+          </a>
+        </li>
+        <li>
+          <a href="/admin/category-manage">
+            <i class='bx bx-pie-chart-alt-2' ></i>
+            <span class="links_name">All Category</span>
+          </a>
+        </li>
+        <li>
+          <a href="/admin/add-product">
+            <i class='bx bx-coin-stack' ></i>
+            <span class="links_name">Add Products</span>
+          </a>
+        </li>
+        <li>
+          <a href="/admin/all-orders">
+            <i class='bx bx-user' ></i>
+            <span class="links_name">All orders</span>
+          </a>
+        </li>
+        <li>
+          <a href="/admin/add-banner">
+            <i class="fa-solid fa-image"></i>
+            <span class="links_name">Banner</span>
+          </a>
+        </li>
+       
+        <li class="log_out">
+          <a href="/admin/admin-logout">
+            <i class='bx bx-log-out'></i>
+            <span class="links_name">Log out</span>
+          </a>
+        </li>
+      </ul>
+  </div>
+   
+ <section>
+  <div class="container">
+    <table class="table" id="productTable">
+      <thead>
+        <tr>
+          <th scope="col">No</th>
+          <th scope="col">Name</th>
+          <th scope="col">Category</th>
+          <th>Image</th>
+          <th scope="col">Action</th>
+          <th> </th>
+        </tr>
+      </thead>
+      <tbody class="">
+        {{#each product}}
+          <tr>
+            {{! <th scope="row"></th> }}
+            <td>{{inc @index}}</td>
+            <td>{{this.Name}}</td>
+            <td>{{this.Category}}</td>
+            <td><img
+                src="/images/{{this.img.[0]}}"
+                alt=""
+                style="width: 90px; height: 80px;"
+              />
+            </td>
+            <td><a
+                href="/admin/view-product?id={{this._id}}"
+                class="btn btn-warning btn-sm"
+              >View</a>
+              <a
+                href="/admin/edit-product?id={{this._id}}"
+                class="btn btn-primary btn-sm"
+              >Edit</a>
+              <a
+                href="/admin/delete-product?id={{this._id}}"
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('Want to delete: {{this.Name}}?')"
+              >Delete</a>
+            </td>
+          </tr>
+        {{/each}}
+
+      </tbody>
+    </table>
+  </div>
+</section>
+     
+
+  <script>
+   let sidebar = document.querySelector(".sidebar");
+let sidebarBtn = document.querySelector(".sidebarBtn");
+sidebarBtn.onclick = function() {
+  sidebar.classList.toggle("active");
+  if(sidebar.classList.contains("active")){
+  sidebarBtn.classList.replace("bx-menu" ,"bx-menu-alt-right");
+}else
+  sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+}
+ </script>
+
+</body>
+</html>

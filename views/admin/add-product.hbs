@@ -1,0 +1,63 @@
+{{> admin-header}}
+<script type="text/javascript" src="/richtexteditor/rte.js"></script>
+<script type="text/javascript" src='/richtexteditor/plugins/all_plugins.js'></script>
+<script type="text/javascript" src='/richtexteditor/plugins/all_plugins.js'></script>
+
+<section>
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-6">
+        <h2 class="text-center">Add Product</h2>
+        <form action="/admin/add-product" method="POST" enctype="multipart/form-data">
+          <label for="">Name</label>
+          <input type="text" name="Name" class="form-control" />
+
+          {{! <label for="">Category</label>
+          <input type="text" name="Category" class="form-control" /> }}
+          <label for="" class="mt-2">Category</label><br />
+          <select class="form-select" aria-label="Default select example" name="Category">
+            {{!-- <option selected></option> --}}
+            {{#each category}}
+            <option value="{{this.Name}}">{{this.Name}}</option>
+            {{/each}}
+          </select>
+          <br />
+
+          <label for="">Price</label>
+          <input type="number" name="Price" class="form-control" />
+          <label for="">Stock</label>
+          <input type="number" name="Stock" class="form-control" />
+          <label for="">Size</label>
+          <select class="form-select " aria-label="Default select example" name="Size" multiple>
+            {{!-- <option selected></option> --}}
+            <option value="All">All</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+          </select>
+          <div id="div_editor1">
+
+             <label for="" >Description</label>
+          <input type="text" name="Description" class="form-control" />
+          </div>
+          <label for="">Image</label>
+          <input type="file" name="Image" id="formFile" class="form-control" multiple>
+          {{#if failed}}
+          <p class="text-danger">{{failed}}</p>
+          {{else}}
+          {{#if success}}
+          <p class="text-success">{{success}}</p>
+          {{/if}}
+          {{/if}}
+          <button type="submit" class="btn btn-success mt-2">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+	var editor1 = new RichTextEditor("#div_editor1");
+	//editor1.setHTMLCode("Use inline HTML or setHTMLCode to init the default content.");
+</script>
