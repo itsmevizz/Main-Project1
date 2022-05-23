@@ -29,6 +29,8 @@ router.get("/", async function (req, res, next) {
     cartCount = await userHelpers.getCartCount(req.session.user._id);
   }
   let category = await productHelper.getAllCategory();
+  let bannerTop = await userHelpers.getTopBanner()
+  console.log(bannerTop);
   productHelper.getAllProducts().then((products) => {
     res.render("user/home", {
       title: "Sparklein",
@@ -37,6 +39,7 @@ router.get("/", async function (req, res, next) {
       category,
       cartCount,
       name,
+      bannerTop,
     });
   });
 });
@@ -221,109 +224,112 @@ router.get("/payment", verifyLogin, async (req, res) => {
   var name = req.flash.Name;
   let address = await userHelpers.getAddressDetails(req.session.user?._id);
   totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
-  if(!totalAmt){
+  if (!totalAmt) {
     res.redirect('/')
-  }res.render("user/payment", { totalAmt, user: req.session.user, name, address });
+  } res.render("user/payment", { totalAmt, user: req.session.user, name, address });
 });
 
 router.post("/payment", verifyLogin, async (req, res) => {
   let products = await userHelpers.getCartProductList(req.session.user?._id);
-  let address = await userHelpers.getUserAddressDetails(req.query.addressId,req.session.user?._id);
+  let address = await userHelpers.getUserAddressDetails(req.query.addressId, req.session.user?._id);
   totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
   req.flash.totalAmt = totalAmt
   userHelpers.placeOrder(address, products, totalAmt, req.query.payment).then((orderId) => {
     req.flash.orderId = orderId
     if (req.query.payment === "COD") {
-      res.json({ codSuccess: true});
-    }else if(req.query.payment === 'ONLINE'){
-      totalPrice=totalAmt*100
-      userHelpers.generateRazorpay(orderId, totalPrice).then((response)=>{
+      res.json({ codSuccess: true });
+    } else if (req.query.payment === 'ONLINE') {
+      totalPrice = totalAmt * 100
+      userHelpers.generateRazorpay(orderId, totalPrice).then((response) => {
         console.log('\n line 232');
         response.user = req.session?.user
-        res.json({razorpaySuccess:true})
+        response.razorpaySuccess = true
+
+        console.log(response);
+        res.json({ response })
       })
-    }else{
+    } else {
       var create_payment_json = {
         "intent": "sale",
         "payer": {
-            "payment_method": "paypal"
+          "payment_method": "paypal"
         },
         "redirect_urls": {
-            "return_url": "http://localhost:3005/success",
-            "cancel_url": "http://localhost:3005/payment"
+          "return_url": "http://localhost:3005/success",
+          "cancel_url": "http://localhost:3005/payment"
         },
         "transactions": [{
-            "item_list": {
-                "items": [{
-                    "name": "item",
-                    "sku": "001",
-                    "price": totalAmt,
-                    "currency": "USD",
-                    "quantity": 1
-                }]
-            },
-            "amount": {
-                "currency": "USD",
-                "total": totalAmt
-            },
-            "description": "This is the payment description."
+          "item_list": {
+            "items": [{
+              "name": "item",
+              "sku": "001",
+              "price": totalAmt,
+              "currency": "USD",
+              "quantity": 1
+            }]
+          },
+          "amount": {
+            "currency": "USD",
+            "total": totalAmt
+          },
+          "description": "This is the payment description."
         }]
-    };
-    paypal.payment.create(create_payment_json, function (error, payment) {
-      if (error) {
+      };
+      paypal.payment.create(create_payment_json, function (error, payment) {
+        if (error) {
           throw error;
-      } else {
-        res.json(payment)
-      }
-  });      
+        } else {
+          res.json(payment)
+        }
+      });
     }
   });
 });
 
 // Paypal Success
-router.get('/success',(req,res)=>{
+router.get('/success', (req, res) => {
   var totalAmt = req.flash.totalAmt
-  var orderId = req.flash.orderId 
+  var orderId = req.flash.orderId
   const payerId = req.query.PayerID
   const paymentId = req.query.paymentId
-  
+
   const execute_payment_json = {
     "payer_id": payerId,
     "transactions": [{
-        "amount": {
-            "currency": "USD",
-            "total": totalAmt
-        }
+      "amount": {
+        "currency": "USD",
+        "total": totalAmt
+      }
     }]
   }
   paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
     if (error) {
-        console.log(error.response);
-        throw error;
+      console.log(error.response);
+      throw error;
     } else {
-      userHelpers.changePaymentStatus(orderId).then(()=>{
+      userHelpers.changePaymentStatus(orderId).then(() => {
         console.log('\n Hi success')
         res.render('user/order-success')
       })
     }
-});
+  });
 })
 
 //Razorpay verification
-router.post('/verify-payment',(req,res)=>{
-  userHelpers.verifyPayment(req.body).then(()=>{
-    userHelpers.changePaymentStatus(req.body['order[receipt]']).then(()=>{
-      res.json({status:true})
+router.post('/verify-payment', (req, res) => {
+  userHelpers.verifyPayment(req.body).then(() => {
+    userHelpers.changePaymentStatus(req.body['order[receipt]']).then(() => {
+      res.json({ status: true })
     })
-  }).catch((err)=>{
+  }).catch((err) => {
     console.log(err);
-    res.json({status:'payment failed'})
+    res.json({ status: 'payment failed' })
   })
 })
 
 // Order success hbs
 
-router.get('/order-placed',(req,res)=>{
+router.get('/order-placed', (req, res) => {
   res.render('user/order-success')
 })
 
@@ -412,6 +418,10 @@ router.post("/cancel-order", (req, res) => {
     } else res.json({ status: true });
   });
 });
+
+router.get('/wishlist',(req,res)=>{
+  res.render('user/wishlist')
+})
 
 
 

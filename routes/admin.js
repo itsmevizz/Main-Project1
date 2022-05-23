@@ -287,7 +287,7 @@ router.get('/getChartData', async (req, res) => {
   });
 
 
-  let growth = Math.round(grow[0] / grow[1] * 10)
+  let growth = Math.round(grow[0] / grow[1])
 
   let sales = Math.round(sale[0] / sale[1])
 
@@ -331,10 +331,18 @@ router.get('/view-banners',async(req,res)=>{
   res.render('admin/view-banners',{admin:true, banners})
 })
 
+// Delete banner
 router.post('/delete-banner',(req,res)=>{
   console.log(req.body,'Helloo');
   adminHelpers.removeBanner(req.body).then(()=>{
     res.json({bannerRemoved:true})
+  })
+})
+
+// Desable banner
+router.post('/desable-banner',(req,res)=>{
+  adminHelpers.hideandShowBanner(req.body).then(()=>{
+    res.json({bannerDesabled:true})
   })
 })
 

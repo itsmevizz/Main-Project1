@@ -142,9 +142,11 @@ function placeOrder() {
       success: (res) => {
         if (res.codSuccess) {
           location.href='/order-placed'
-        } else if (res.razorpaySuccess) {
+        } else if (res.response.razorpaySuccess) {
+          console.log('Razo');
           razorpayPayment(res);
         } else {
+          console.log("Paypal");
           payPalPayment(res);
         }
       },
@@ -155,21 +157,22 @@ function placeOrder() {
 // razorpay
 
 function razorpayPayment(order) {
+  console.log(order);
   var options = {
     key: "rzp_test_BMQyq5KAzN3eqy", // Enter the Key ID generated from the Dashboard
-    amount: order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    amount: order.response.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     currency: "INR",
     name: "Sparklein",
     description: "Test Transaction",
     image: "",
-    order_id: order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    order_id: order.response.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     handler: function (response) {
       varifyPayment(response, order);
     },
     prefill: {
-      name: order.user.Name,
-      email: order.user.Email,
-      contact: order.user.Number,
+      name: order.response.user.Name,
+      email: order.response.user.Email,
+      contact: order.response.user.Number,
     },
     notes: {
       address: "Razorpay Corporate Office",
@@ -412,13 +415,53 @@ function deleteBanner(id){
           if (response.bannerRemoved) {
             Swal.fire(
               "Deleted!",
-              "Your product has been deleted.",
+              "Banner has been deleted.",
               "success"
             ).then((result) => {
               if (result.isConfirmed) {
                 location.reload();
               }
             });
+          }
+        },
+      });
+    }
+  });
+
+}
+
+
+// Desable Banner
+function desableBanner(id){
+  console.log(id);
+  Swal.fire({
+    title: "Are you sure?",
+    text: "",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/admin/desable-banner",
+        data: {
+          bannerId: id,
+        },
+        method: "post",
+        success: (response) => {
+          if (response.bannerDesabled) {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "",
+              showConfirmButton: false,
+              timer: 900,
+            }).then(()=>{
+              location.reload()
+            })
+            
           }
         },
       });

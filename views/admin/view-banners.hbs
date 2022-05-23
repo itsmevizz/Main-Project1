@@ -143,6 +143,12 @@
                     </ul>
                 </li>
                 <li class="menu-item ">
+                    <a href="/admin/all-orders" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-collection"></i>
+                        <div data-i18n="Basic">Orders</div>
+                    </a>
+                </li>
+                <li class="menu-item ">
                     <a href="/admin/chartdata" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-collection"></i>
                         <div data-i18n="Basic">Charts</div>
@@ -216,6 +222,17 @@
                                     <td>{{this.Position}}</td>
                                     <td>
                                         <div>
+                                            {{#if this.Status}}
+                                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                onclick="desableBanner('{{this._id}}')">
+                                                <span class="badge bg-label-primary me-1">Disable</span>
+                                            </button>
+                                            {{else}}
+                                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                onclick="desableBanner('{{this._id}}')">
+                                                <span class="badge bg-label-success me-1">Enable</span>
+                                            </button>
+                                            {{/if}}
                                             <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
                                                 onclick="deleteBanner('{{this._id}}')">
                                                 <span class="badge bg-label-danger me-1">Delete</span>

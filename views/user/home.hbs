@@ -1,4 +1,3 @@
-
 <main>
 
   <div class=" pos_bannerslide">
@@ -10,19 +9,14 @@
               src="http://demo.posthemes.com/pos_ecolife_fashion/modules/posslideshows/images/sample-1.jpg" alt="" />
           </div>
           <div id="pos-slideshow-home" class="slides">
-
+            {{#each bannerTop}}
             <a href="" title="slide show1"><img style="display:none"
-                src="http://demo.posthemes.com/pos_ecolife_fashion/modules/posslideshows/images/sample-1.jpg"
-                data-thumb=""
-                alt="" title="#htmlcaption1" /> </a>
-            <a href="" title="slide show2"><img style="display:none"
+                src="/images/Banner/{{this.img}}"
+                data-thumb="" alt="" title="#htmlcaption1" /> </a>
+            {{/each}}
+            {{!-- <a href="" title="slide show2"><img style="display:none"
                 src="http://demo.posthemes.com/pos_ecolife_fashion/modules/posslideshows/images/sample-2.jpg"
-                data-thumb=""
-                alt="" title="#htmlcaption2" /> </a>
-            {{!-- <a href="" title="slide show3"><img style="display:none"
-                src="/images/Banner/20220513000555.webp"
-                data-thumb=""
-                alt="" title="" /> </a> --}}
+                data-thumb="" alt="" title="#htmlcaption2" /> </a> --}}
           </div>
           <div id="htmlcaption1" class="pos-slideshow-caption nivo-html-caption nivo-caption">
             <div class="timethai" style=" 
@@ -39,7 +33,7 @@
 							
 							">
             </div>
-            <div class="banner7-des">
+            {{!-- <div class="banner7-des">
               <div class="container">
                 <div class="desc_slideshow desc_slideshow_0 position_left">
                   <div class="info">
@@ -59,7 +53,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> --}}
           </div>
           <div id="htmlcaption2" class="pos-slideshow-caption nivo-html-caption nivo-caption">
             <div class="timethai" style=" 
@@ -76,7 +70,7 @@
 							
 							">
             </div>
-            <div class="banner7-des">
+            {{!-- <div class="banner7-des">
               <div class="container">
                 <div class="desc_slideshow desc_slideshow_1 position_left">
                   <div class="info">
@@ -95,7 +89,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> --}}
           </div>
         </div>
       </div>

@@ -4,7 +4,8 @@ var collection = require("../model/collection");
 const bcrypt = require("bcrypt");
 const { response } = require("../app");
 var objectId = require("mongodb").ObjectId;
-var instance = require('../middleware/razorpay')
+var instance = require('../middleware/razorpay');
+const { resolve } = require("path");
 module.exports = {
   doSignup: (userData) => {
     return new Promise(async (resolve, reject) => {
@@ -597,5 +598,20 @@ module.exports = {
         resolve()
       })
     })
+  }),
+
+// Get the banner
+  getTopBanner:(()=>{
+    return new Promise(async(resolve, reject)=>{
+      let banner = await db.get()
+      .collection(collection.BANNER_COLLECTION)
+      .aggregate([{$match:{Position:'Top',Status:'Show'}},
+      {
+        $project:{_id:0,img:1}
+      },
+    ]).toArray()
+    resolve(banner)
+    })
   })
+
 };
