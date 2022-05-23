@@ -303,7 +303,7 @@ router.get('/success',(req,res)=>{
     } else {
       userHelpers.changePaymentStatus(orderId).then(()=>{
         console.log('\n Hi success')
-        res.render('user/successPay')
+        res.render('user/order-success')
       })
     }
 });
@@ -319,6 +319,12 @@ router.post('/verify-payment',(req,res)=>{
     console.log(err);
     res.json({status:'payment failed'})
   })
+})
+
+// Order success hbs
+
+router.get('/order-placed',(req,res)=>{
+  res.render('user/order-success')
 })
 
 router.get("/addNewAddress", verifyLogin, async (req, res) => {

@@ -141,15 +141,7 @@ function placeOrder() {
       method: "post",
       success: (res) => {
         if (res.codSuccess) {
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Order Placed",
-            showConfirmButton: false,
-            timer: 2500,
-          }).then(() => {
-            location.href = "/";
-          });
+          location.href='/order-placed'
         } else if (res.razorpaySuccess) {
           razorpayPayment(res);
         } else {

@@ -446,7 +446,8 @@ module.exports = {
       let orders = await db
         .get()
         .collection(collection.ORDER_COLLECTION)
-        .find({ userId: objectId(userId) })
+        .find({ userId: objectId(userId)})
+        .sort({_id:-1})
         .toArray();
       resolve(orders);
     });
@@ -578,7 +579,7 @@ module.exports = {
       if(hmac ==details['payment[razorpay_signature]']){
         resolve()
       }else{
-        reject()
+        reject() 
       }
 
     })

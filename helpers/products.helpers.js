@@ -1,7 +1,7 @@
 var collection = require("../model/collection");
 var db = require("../config/database");
 const async = require("hbs/lib/async");
-const { getTotalAmount } = require("./user-helpers");
+const { sale } = require("paypal-rest-sdk");
 var objectId = require("mongodb").ObjectId;
 module.exports = {
   addProduct: (product, files, resolve) => {
@@ -150,29 +150,153 @@ module.exports = {
       }
     });
   },
-  topPayMethod:()=>{
-    return new Promise(async(resolve, reject)=>{
-     let count =await db.get()
-      .collection(collection.ORDER_COLLECTION)
-      .aggregate([
-        {$group:{_id:'$PaymentMethode',
-        count:{$sum:1}
-      }}
-      ]).toArray()
-      resolve(count)
-    })
+  topPayMethod: () => {
+    return new Promise(async (resolve, reject) => {
+      let count = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([{ $group: { _id: "$PaymentMethode", count: { $sum: 1 } } }])
+        .toArray();
+      resolve(count);
+    });
   },
-  totalRevenue:()=>{
-    return new Promise(async(resolve,reject)=>{
-      let revenue =await db.get()
-      .collection(collection.ORDER_COLLECTION)
-      .aggregate([
-        {$group:{
-          _id:null,
-          revenue:{$sum:'$totalAmount'}
-        }}
-      ]).toArray()
-      resolve(revenue)
+  totalRevenue: () => {
+    return new Promise(async (resolve, reject) => {
+      let revenue = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $group: {
+              _id: null,
+              revenue: { $sum: "$totalAmount" },
+            },
+          },
+        ])
+        .toArray();
+      console.log(revenue, "revenue");
+      resolve(revenue);
+    });
+  },
+  // Daily sales
+  getDailySales: () => {
+    return new Promise(async (resolve, reject) => {
+      let dailySales = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: {
+              status: "Delivered",
+            },
+          },
+          {
+            $group: {
+              _id: { $dateToString: { format: "%Y-%m-%d", date: "$Date" } },
+              totalAmount: { $sum: "$totalAmount" },
+              count: { $sum: 1 },
+            },
+          },
+          {
+            $sort: { _id: -1 },
+          },
+        ])
+        .toArray();
+
+      resolve(dailySales);
+    });
+  },
+
+  // Monthly sales
+
+  getMonthlySales: () => {
+    return new Promise(async (resolve, reject) => {
+      let monthlySales = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: {
+              status: "Delivered",
+            },
+          },
+          {
+            $group: {
+              _id: { $dateToString: { format: "%Y-%m", date: "$Date" } },
+              totalAmount: { $sum: "$totalAmount" },
+              count: { $sum: 1 },
+            },
+          },
+          {
+            $sort: { _id: -1 },
+          },
+          {
+            $limit: 7,
+          },
+        ])
+        .toArray();
+      resolve(monthlySales);
+    });
+  },
+
+  // Yearly sales
+
+  getYearlySales: () => {
+    return new Promise(async (resolve, reject) => {
+      let yearlySales = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: {
+              status: "Delivered",
+            },
+          },
+          {
+            $group: {
+              _id: { $dateToString: { format: "%Y", date: "$Date" } },
+              totalAmount: { $sum: "$totalAmount" },
+              count: { $sum: 1 },
+            },
+          },
+          {
+            $sort: { _id: -1 },
+          },
+          {
+            $limit: 7,
+          },
+        ])
+        .toArray();
+
+      resolve(yearlySales);
+    });
+  },
+
+  // Get all sales in the day
+
+  getAllSales:()=>{
+    return new Promise (async(resolve, reject)=>{
+      let sales = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $group: {
+              _id: { $dateToString: { format: "%d", date: "$Date" } },
+              count: { $sum: 1 },
+            },
+          },
+          {
+            $sort: { _id: -1 },
+          },
+          {
+            $limit: 7,
+          },
+        ])
+        .toArray();
+        console.log(sales,'@#$@#$@#sales');
+      resolve(sales);
+
     })
   }
 };

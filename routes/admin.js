@@ -23,6 +23,9 @@ router.get("/admin-home",async (req, res) => {
   console.log('hi');
   let totalRevanue =await productHelper.totalRevenue()
   let pay =await productHelper.topPayMethod()
+  let monthlySales= await productHelper.getMonthlySales()
+  let dailySales = await productHelper.getDailySales()
+  let yearlySales = await productHelper.getYearlySales()
   // Change array to object
   var topPayMethod =await pay.reduce(function(r, e) {
     r[e._id] = e.count;
@@ -48,6 +51,7 @@ router.get('/view-allproducts',(req,res)=>{
 router.get("/admin-login", (req, res) => {
   res.render("admin/admin-login", { title, adminlogin: true });
 });
+
 router.get("/add-product", (req, res) => {
   success=req.flash.success
   failed = req.flash.failed
@@ -102,6 +106,7 @@ router.get('/delete-user',(req,res)=>{
     res.redirect("/admin/all-users");
   });
 })
+// Category management
 
 router.get('/category-manage',(req,res)=>{
   productHelper.getAllCategory().then((category)=>{
@@ -122,8 +127,17 @@ router.post('/add-category',upload.single('Image'),(req,res)=>{
     req.flash.failed = 'Please choose file'
     res.redirect("/admin/category-manage");
   }
-
 })
+
+router.get('/view-category',(req,res)=>{
+  productHelper.getAllCategory().then((category)=>{
+    console.log(category);
+    res.render('admin/view-category',{admin:true,category})
+  })
+})
+
+
+
 const credential = {
   username: "admin",
   password: "admin",
@@ -193,4 +207,70 @@ router.post('/deleveryStatusUpdate',(req,res)=>{
    res.json(true)
   })
 })
+
+
+// Chart data page
+router.get('/chartdata',(req,res)=>{
+  res.render('admin/charts',{admin:true})
+})
+
+// Get dart data ajax call
+router.get('/getChartData',async(req,res)=>{
+  let monthlySales= await productHelper.getMonthlySales()
+  let dailySales = await productHelper.getDailySales()
+  let yearlySales = await productHelper.getYearlySales()
+  let allSales = await productHelper.getAllSales()
+
+
+        // map to get only the total amount
+        let dailyAmt = [];
+        dailySales.map((daily) => {
+          dailyAmt.push(daily.totalAmount);
+        });
+        // map to get only the dates
+        let date = [];
+        dailySales.map((daily) => {
+          date.push(daily._id);
+        });
+        // map to get only the amount
+        let monthlyAmount = [];
+        monthlySales.map((daily) => {
+          monthlyAmount.push(daily.totalAmount);
+        });
+        // map to get only the date
+        let month = [];
+        monthlySales.map((daily) => {
+          month.push(daily._id);
+        });
+
+
+      // map to get only the amount
+      let yearlyAmount = [];
+      yearlySales.map((daily) => {
+        yearlyAmount.push(daily.totalAmount);
+      });
+
+      // map to get only the year
+      let year = [];
+      yearlySales.map((daily) => {
+        year.push(daily._id);
+      });
+
+      // map to get the count of sale
+      let sale = [];
+      allSales.map((daily) => {
+        sale.push(daily.count);
+      });
+
+      let  growth =Math.round( monthlyAmount[0]/monthlyAmount[1]*10 )
+
+      let sales = Math.round(sale[0]/sale[1])
+      
+
+  console.log(dailyAmt,"daily \n", date,"date \n", monthlyAmount,'monyhly\n',month,'month\n',growth,'growth');
+
+  res.json({dailyAmt,date,monthlyAmount,month,yearlyAmount,year,growth, sales})
+
+})
+
 module.exports = router;
