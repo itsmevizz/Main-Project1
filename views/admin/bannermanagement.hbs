@@ -123,14 +123,27 @@
                         </li>
                     </ul>
                 </li>
-                <li class="menu-item">
-                    <a href="/admin/bannermanage" class="menu-link">
-                        <i class="menu-icon tf-icons bx bx-collection"></i>
-                        <div data-i18n="Basic">Banner Management</div>
+                <li class="menu-item  active open">
+                    <a href="" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons bx bx-layout"></i>
+                        <div data-i18n="Layouts">Banner management</div>
                     </a>
+
+                    <ul class="menu-sub">
+                        <li class="menu-item active">
+                            <a href="/admin/bannermanage" class="menu-link">
+                                <div data-i18n="Without menu">Add Banner</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/admin/view-banners" class="menu-link">
+                                <div data-i18n="Without navbar">View Banner</div>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="menu-item active">
-                    <a href="" class="menu-link">
+                <li class="menu-item ">
+                    <a href="/admin/chartdata" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-collection"></i>
                         <div data-i18n="Basic">Charts</div>
                     </a>
@@ -179,27 +192,50 @@
             </nav>
 
             <!-- / Navbar -->
-
-            <section class="container">
-                <div class="row my-5">
-                    <div class="col-md-5">
-                        <h2>Daily Sales</h2>
-                        <canvas id="myChart" class='' width="200" height="150"></canvas>
-                    </div>
-                    <div class="col-md-2"></div>
-                    <div class="col-md-5">
-                        <h2>Monthly Sales</h2>
-                        <canvas id="myChart2" class='' width="200" height="150"></canvas>
-                    </div>
-                    <div class="col-md-5 mt-5">
-                        <h2>Yearly Sales</h2>
-                        <canvas id="myChart3" class='' width="200" height="150"></canvas>
+            <section>
+                <div class="container-xxl flex-grow-1 container-p-y d-flex">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <h5 class="card-header text-center"> ADD BANNER</h5>
+                            <div class="card-body">
+                                <form action="/admin/add-banner" method="POST" enctype="multipart/form-data">
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput1" class="form-label">Name</label>
+                                        <span id="name-error" class="text-danger"> </span>
+                                        <input type="text" name="Name" id="bannerName" class="form-control"
+                                            onkeyup="validateBannerName()" required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="exampleDataList" class="form-label"></label>
+                                        <select class="form-select " aria-label="Default select example"
+                                            name="Position">
+                                            {{!-- <option selected></option> --}}
+                                            <option value="Top">Top Banner</option>
+                                            <option value="Bottom">Bottom Banner</option>
+                                        </select>
+                                    </div>
+                                    <label for="">Image</label>
+                                    <input type="file" name="Image" id="file-input" class="form-control">
+                                    {{!-- <img id="blah" src="#" alt="your image" /> --}}
+                                    {{#if failed}}
+                                    <p class="text-danger">{{failed}}</p>
+                                    {{else}}
+                                    {{#if success}}
+                                    <p class="text-success">{{success}}</p>
+                                    {{/if}}
+                                    {{/if}}
+                                    <button type="submit" class="btn btn-success mt-2"
+                                        onclick="return validateBanner()">Submit</button>
+                            </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-
             </section>
-            <script data-cfasync="false"
-                src="https://preview.colorlib.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+
+            <script data-cfasync=" false"
+                src="https://preview.colorlib.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+                </script>
             <script src="/javascripts/jquery.min.js"></script>
             <script src="javascripts/popper.js%2bbootstrap.min.js%2bmain.js.pagespeed.jc.QmeOzhLoYz.js"></script>
             <script>eval(mod_pagespeed_9xXcEtpYtN);</script>
@@ -233,12 +269,3 @@
 
             <!-- Place this tag in your head or just before your close body tag. -->
             <script async defer src="https://buttons.github.io/buttons.js"></script>
-
-
-
-
-            <script>
-                $(document).ready(function () {
-                    getChart()
-                })
-            </script>

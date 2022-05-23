@@ -6,7 +6,7 @@ function getChart() {
       console.log(chartDatas);
       const ctx = document.getElementById("myChart").getContext("2d");
       const myChart = new Chart(ctx, {
-        type: "pie",
+        type: "bar",
         data: {
           labels: chartDatas.date,
           datasets: [
@@ -138,6 +138,30 @@ function dashboard() {
       //   sales count
       document.querySelector("#salesId").innerHTML = chartDatas.sales;
       //
+      //   Growth in resent year
+      document.querySelector("#growthYearNow").innerHTML = chartDatas.year[0];
+      //
+      //   Growth in resent year amount
+      document.querySelector("#growthAmntNow").innerHTML =
+        chartDatas.yearlyAmount[0];
+      //
+      //   Growth in previous year
+      document.querySelector("#growthPreviousYear").innerHTML = chartDatas.year[1];
+      //
+      //   Growth in previous year amount
+      document.querySelector("#growthPreviousYearAmnt").innerHTML = chartDatas.yearlyAmount[1];
+      //
+      //   Profit this month
+      document.querySelector("#profit").innerHTML = chartDatas.profit;
+      //
+      //   sales this month
+      document.querySelector("#salesThisMonth").innerHTML = chartDatas.grow[0];
+      //
+      //  Transactions
+      document.querySelector("#transactions").innerHTML = chartDatas.transaction;
+       //  Payments
+       document.querySelector("#payments").innerHTML = chartDatas.payments;
+
       const growthChartEl = document.querySelector("#growthChart"),
         growthChartOptions = {
           series: [chartDatas.growth],
@@ -220,8 +244,8 @@ function dashboard() {
       // Profit Report Line Chart
       // --------------------------------------------------------------------
       const profileReportChartEl = document.querySelector(
-          "#profileReportChart"
-        ),
+        "#profileReportChart"
+      ),
         profileReportChartConfig = {
           chart: {
             height: 80,
@@ -291,8 +315,8 @@ function dashboard() {
       // Order Statistics Chart
       // --------------------------------------------------------------------
       const chartOrderStatistics = document.querySelector(
-          "#orderStatisticsChart"
-        ),
+        "#orderStatisticsChart"
+      ),
         orderChartConfig = {
           chart: {
             height: 165,

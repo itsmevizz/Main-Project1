@@ -388,3 +388,41 @@ function deliveryStatus(value, orderId) {
   });
 }
 
+
+// Remove Banner
+function deleteBanner(id){
+  console.log(id);
+  Swal.fire({
+    title: "Are you sure?",
+    text: "",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, remove it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/admin/delete-banner",
+        data: {
+          bannerId: id,
+        },
+        method: "post",
+        success: (response) => {
+          if (response.bannerRemoved) {
+            Swal.fire(
+              "Deleted!",
+              "Your product has been deleted.",
+              "success"
+            ).then((result) => {
+              if (result.isConfirmed) {
+                location.reload();
+              }
+            });
+          }
+        },
+      });
+    }
+  });
+
+}

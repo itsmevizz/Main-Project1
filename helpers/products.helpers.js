@@ -198,7 +198,7 @@ module.exports = {
             },
           },
           {
-            $sort: { _id: -1 },
+            $sort: { _id: 1 },
           },
         ])
         .toArray();
@@ -228,6 +228,38 @@ module.exports = {
             },
           },
           {
+            $sort: { _id: 1 },
+          },
+          {
+            $limit: 7,
+          },
+        ])
+        .toArray();
+      resolve(monthlySales);
+    });
+  },
+
+  // Monthly sales for dashboard
+
+  getMonthlySalesForGrowth: () => {
+    return new Promise(async (resolve, reject) => {
+      let monthlySales = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: {
+              status: "Delivered",
+            },
+          },
+          {
+            $group: {
+              _id: { $dateToString: { format: "%Y-%m", date: "$Date" } },
+              totalAmount: { $sum: "$totalAmount" },
+              count: { $sum: 1 },
+            },
+          },
+          {
             $sort: { _id: -1 },
           },
           {
@@ -239,9 +271,44 @@ module.exports = {
     });
   },
 
+
   // Yearly sales
 
   getYearlySales: () => {
+    return new Promise(async (resolve, reject) => {
+      let yearlySales = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: {
+              status: "Delivered",
+            },
+          },
+          {
+            $group: {
+              _id: { $dateToString: { format: "%Y", date: "$Date" } },
+              totalAmount: { $sum: "$totalAmount" },
+              count: { $sum: 1 },
+            },
+          },
+          {
+            $sort: { _id: 1 },
+          },
+          {
+            $limit: 7,
+          },
+        ])
+        .toArray();
+
+      resolve(yearlySales);
+    });
+  },
+
+
+  // Yearly sales for dash board
+
+  getYearlySalesForDashBoard: () => {
     return new Promise(async (resolve, reject) => {
       let yearlySales = await db
         .get()
@@ -274,8 +341,8 @@ module.exports = {
 
   // Get all sales in the day
 
-  getAllSales:()=>{
-    return new Promise (async(resolve, reject)=>{
+  getAllSales: () => {
+    return new Promise(async (resolve, reject) => {
       let sales = await db
         .get()
         .collection(collection.ORDER_COLLECTION)
@@ -294,9 +361,21 @@ module.exports = {
           },
         ])
         .toArray();
-        console.log(sales,'@#$@#$@#sales');
       resolve(sales);
+    });
+  },
 
-    })
-  }
+  // get all payment amount razorpay and Paypal
+  getPaymentMethodAmount: () => {
+    return new Promise(async (resolve, reject) => {
+      let pay = await db
+      .get()
+      .collection(collection.ORDER_COLLECTION)
+      .aggregate([{ $group: { _id: "$PaymentMethode", count: { $sum: "$totalAmount" }}},{
+        $sort: { _id: 1 },
+      },])
+      .toArray();
+      resolve(pay);
+    });
+  },
 };
