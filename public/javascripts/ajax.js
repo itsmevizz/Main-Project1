@@ -136,13 +136,14 @@ function placeOrder() {
       text: "Please give address and payment method",
     });
   } else {
+    console.log(PaymentMethod);
     $.ajax({
       url: `/payment?payment=${PaymentMethod}&addressId=${checkoutAddressId}`,
       method: "post",
       success: (res) => {
         if (res.codSuccess) {
           location.href='/order-placed'
-        } else if (res.response.razorpaySuccess) {
+        } else if (PaymentMethod === 'ONLINE') {
           console.log('Razo');
           razorpayPayment(res);
         } else {
@@ -225,11 +226,11 @@ function payPalPayment(payment) {
     }
   }
 }
-// Payment success
-function paypalSuccess(){
-  console.log('Hi success');
-  location.href = "/";
-}
+// // Payment success
+// function paypalSuccess(){
+//   console.log('Hi success');
+//   location.href = "/";
+// }
 
 
 // Edit address

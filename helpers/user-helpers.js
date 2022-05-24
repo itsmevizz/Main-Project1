@@ -372,6 +372,7 @@ module.exports = {
     });
   },
   placeOrder: (order, products, total, method) => {
+    console.log('Hi cod');
     return new Promise((resolve, reject) => {
       let status = method === "COD" ? "placed" : "pending";
       let orderObj = {
@@ -544,7 +545,7 @@ module.exports = {
   cancelOrder: (details) => {
     return new Promise(async(resolve, reject) => {
       let order=await db.get().collection(collection.ORDER_COLLECTION).findOne({_id:objectId(details.orderId)})
-      if(order.status == 'placed'){
+      if(order.status == 'pending'){
         db.get()
         .collection(collection.ORDER_COLLECTION)
         .deleteOne({ _id: objectId(details.orderId) })
@@ -612,6 +613,18 @@ module.exports = {
     ]).toArray()
     resolve(banner)
     })
-  })
+  }),
 
+  getBottomBanner:(()=>{
+    return new Promise(async(resolve, reject)=>{
+      let banner = await db.get()
+      .collection(collection.BANNER_COLLECTION)
+      .aggregate([{$match:{Position:'Bottom',Status:'Show'}},
+      {
+        $project:{_id:0,img:1}
+      },
+    ]).toArray()
+    resolve(banner)
+    })
+  }),
 };

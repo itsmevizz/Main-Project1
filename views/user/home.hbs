@@ -5,19 +5,13 @@
       data-pausehover="hover">
       <div class="pos-slideshow">
         <div class="flexslider ma-nivoslider">
-          <div class="pos-loading"><span></span><img
-              src="http://demo.posthemes.com/pos_ecolife_fashion/modules/posslideshows/images/sample-1.jpg" alt="" />
-          </div>
           <div id="pos-slideshow-home" class="slides">
             {{#each bannerTop}}
-            <a href="" title="slide show1"><img style="display:none"
-                src="/images/Banner/{{this.img}}"
-                data-thumb="" alt="" title="#htmlcaption1" /> </a>
+            <a href="" title="slide show1"><img style="display:none" src="/images/Banner/{{this.img}}"
+                title="#htmlcaption1" /> </a>
             {{/each}}
-            {{!-- <a href="" title="slide show2"><img style="display:none"
-                src="http://demo.posthemes.com/pos_ecolife_fashion/modules/posslideshows/images/sample-2.jpg"
-                data-thumb="" alt="" title="#htmlcaption2" /> </a> --}}
           </div>
+
           <div id="htmlcaption1" class="pos-slideshow-caption nivo-html-caption nivo-caption">
             <div class="timethai" style=" 
 								position:absolute;
@@ -33,110 +27,55 @@
 							
 							">
             </div>
-            {{!-- <div class="banner7-des">
-              <div class="container">
-                <div class="desc_slideshow desc_slideshow_0 position_left">
-                  <div class="info">
 
-                    <h2 data-animation="animated fadeInDown " class="transition_slide_0">women wear</h2>
-
-
-                    <h2 data-animation="animated fadeInLeft " class="transition_slide_1">collection</h2>
-
-
-                    <p data-animation="animated fadeInRight " class="transition_slide_2">Huge savings on high street
-                      fashion</p>
-
-
-                    <a href="" data-animation="animated zoomIn" class="readmore transition_slide_3">Shop Now</a>
-
-                  </div>
-                </div>
-              </div>
-            </div> --}}
-          </div>
-          <div id="htmlcaption2" class="pos-slideshow-caption nivo-html-caption nivo-caption">
-            <div class="timethai" style=" 
-								position:absolute;
-								top:0;
-								left:0;
-								z-index:8;
-								background-color: rgba(49, 56, 72, 0.298);
-								height:5px;
-								-webkit-animation: myfirst 6000ms ease-in-out;
-								-moz-animation: myfirst 6000ms ease-in-out;
-								-ms-animation: myfirst 6000ms ease-in-out;
-								animation: myfirst 6000ms ease-in-out;
-							
-							">
-            </div>
-            {{!-- <div class="banner7-des">
-              <div class="container">
-                <div class="desc_slideshow desc_slideshow_1 position_left">
-                  <div class="info">
-
-                    <h2 data-animation="animated fadeInRight " class="transition_slide_0">Special offer</h2>
-
-
-                    <h2 data-animation="animated fadeInUp " class="transition_slide_1">Mega Sale</h2>
-
-
-                    <p data-animation="animated fadeInLeft " class="transition_slide_2">Women Fashion Up To 70% Off</p>
-
-
-                    <a href="" data-animation="animated zoomIn" class="readmore transition_slide_3">Shop Now</a>
-
-                  </div>
-                </div>
-              </div>
-            </div> --}}
           </div>
         </div>
       </div>
-    </div>
 
-    <script type="text/javascript">
-      $(document).ready(function () {
-        //Function to animate slider captions 
-        function doAnimations(elems) {
-          //Cache the animationend event in a variable
-          var animEndEv = 'webkitAnimationEnd animationend';
+      {{!--
+      <script type="text/javascript">
+        $(document).ready(function () {
+          //Function to animate slider captions 
+          function doAnimations(elems) {
+            //Cache the animationend event in a variable
+            var animEndEv = 'webkitAnimationEnd animationend';
 
-          elems.each(function () {
-            var $this = $(this),
-              $animationType = $this.data('animation');
-            $this.addClass($animationType).one(animEndEv, function () {
-              $this.removeClass($animationType);
+            elems.each(function () {
+              var $this = $(this),
+                $animationType = $this.data('animation');
+              $this.addClass($animationType).one(animEndEv, function () {
+                $this.removeClass($animationType);
+              });
             });
-          });
-        }
-        //Variables on page load 
-        var $myCarousel = $('.ma-nivoslider'),
-          $firstAnimatingElems = $myCarousel.find('.nivo-caption').find("[data-animation ^= 'animated']");
-        //Animate captions in first slide on page load 
-        doAnimations($firstAnimatingElems);
+          }
+          //Variables on page load 
+          var $myCarousel = $('.ma-nivoslider'),
+            $firstAnimatingElems = $myCarousel.find('.nivo-caption').find("[data-animation ^= 'animated']");
+          //Animate captions in first slide on page load 
+          doAnimations($firstAnimatingElems);
 
-      });
-    </script>
-    <div class="home-banner">
-      <div class="row">
-        <div class="col col-md-4 col-sm-12  col-xs-12">
-          <div class="banner-box"><a href="#"><img src="http://demo.posthemes.com/pos_ecolife_fashion/img/cms/1_1.jpg"
-                alt="" /></a></div>
-        </div>
-        <div class="col col-md-4 col-sm-12 col-xs-12">
-          <div class="banner-box"><a href="#"><img src="http://demo.posthemes.com/pos_ecolife_fashion/img/cms/2_1.jpg"
-                alt="" /></a></div>
-          <div class="banner-box"><a href="#"><img src="http://demo.posthemes.com/pos_ecolife_fashion/img/cms/3_1.jpg"
-                alt="" /></a></div>
-        </div>
-        <div class="col col-md-4 col-sm-12  col-xs-12">
-          <div class="banner-box"><a href="#"><img src="http://demo.posthemes.com/pos_ecolife_fashion/img/cms/4_1.jpg"
-                alt="" /></a></div>
+        });
+      </script> --}}
+      <div class="home-banner">
+        <div class="row">
+          <div class="col col-md-4 col-sm-12  col-xs-12">
+            <div class="banner-box"><a href="#"><img src="http://demo.posthemes.com/pos_ecolife_fashion/img/cms/1_1.jpg"
+                  alt="" /></a></div>
+          </div>
+          <div class="col col-md-4 col-sm-12 col-xs-12">
+            <div class="banner-box"><a href="#"><img src="http://demo.posthemes.com/pos_ecolife_fashion/img/cms/2_1.jpg"
+                  alt="" /></a></div>
+            <div class="banner-box"><a href="#"><img src="http://demo.posthemes.com/pos_ecolife_fashion/img/cms/3_1.jpg"
+                  alt="" /></a></div>
+          </div>
+          <div class="col col-md-4 col-sm-12  col-xs-12">
+            <div class="banner-box"><a href="#"><img src="http://demo.posthemes.com/pos_ecolife_fashion/img/cms/4_1.jpg"
+                  alt="" /></a></div>
+          </div>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 
 
@@ -481,21 +420,17 @@
       </div>
     </div>
 
-    <div class="home-banner static-banner"><img src="http://demo.posthemes.com/pos_ecolife_fashion/img/cms/5_1.jpg"
-        alt="" class="img-responsive" />
-      <div class="content_cms">
-        <div class="container">
-          <div class="offset-md-6 col-md-6 col-sm-12 col-xs-12">
-            <div class="txt_cms">
-              <h2>Weekend Sale</h2>
-              <h3>Up to 80% off</h3>
-              <p>Be An Inspiration By Donning Pieces From Our Latest Single Diamond Ring Collection</p>
-              <a href="#">shop now</a>
-            </div>
-          </div>
-        </div>
-      </div>
+    {{!-- Bottom banner --}}
+
+    <div class="home-banner static-banner">
+
+      <img src="/images/Banner/{{bannerBottom.[0].img}}" alt="" class="img-responsive" />
+
     </div>
+
+
+    {{!-- /Banner bottom --}}
+
     <div class="testimonials_container">
       <div class="container">
         <div class=" row pos_content">
@@ -575,7 +510,7 @@
   </script>
 
 
-  <div class="container">
+  {{!-- <div class="container">
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
         <div class="pos_bestsellers_product  product_block_container" data-items="1" data-speed="1000" data-autoplay="0"
@@ -2580,7 +2515,7 @@
         </div>
       </div>
 
-    </div>
+    </div> --}}
     <div class="pos_logo product_block_container">
       <div class="row pos_content">
         <div class="logo-slider owl-carousel">

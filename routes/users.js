@@ -30,7 +30,7 @@ router.get("/", async function (req, res, next) {
   }
   let category = await productHelper.getAllCategory();
   let bannerTop = await userHelpers.getTopBanner()
-  console.log(bannerTop);
+  let bannerBottom = await userHelpers.getBottomBanner()
   productHelper.getAllProducts().then((products) => {
     res.render("user/home", {
       title: "Sparklein",
@@ -40,6 +40,7 @@ router.get("/", async function (req, res, next) {
       cartCount,
       name,
       bannerTop,
+      bannerBottom,
     });
   });
 });
@@ -249,14 +250,15 @@ router.post("/payment", verifyLogin, async (req, res) => {
         res.json({ response })
       })
     } else {
+      console.log('Paypal', req.query.payment);
       var create_payment_json = {
         "intent": "sale",
         "payer": {
           "payment_method": "paypal"
         },
         "redirect_urls": {
-          "return_url": "http://localhost:3005/success",
-          "cancel_url": "http://localhost:3005/payment"
+          "return_url": "http://localhost:3000/success",
+          "cancel_url": "http://localhost:3000/payment"
         },
         "transactions": [{
           "item_list": {
@@ -279,6 +281,7 @@ router.post("/payment", verifyLogin, async (req, res) => {
         if (error) {
           throw error;
         } else {
+          payment.razorpaySuccess = false
           res.json(payment)
         }
       });
@@ -288,6 +291,7 @@ router.post("/payment", verifyLogin, async (req, res) => {
 
 // Paypal Success
 router.get('/success', (req, res) => {
+  console.log('Hi paypal');
   var totalAmt = req.flash.totalAmt
   var orderId = req.flash.orderId
   const payerId = req.query.PayerID
@@ -309,7 +313,7 @@ router.get('/success', (req, res) => {
     } else {
       userHelpers.changePaymentStatus(orderId).then(() => {
         console.log('\n Hi success')
-        res.render('user/order-success')
+        res.redirect('/order-placed')
       })
     }
   });
@@ -318,7 +322,8 @@ router.get('/success', (req, res) => {
 //Razorpay verification
 router.post('/verify-payment', (req, res) => {
   userHelpers.verifyPayment(req.body).then(() => {
-    userHelpers.changePaymentStatus(req.body['order[receipt]']).then(() => {
+    console.log(req.body['order[response][receipt]'], 'recept\n');
+    userHelpers.changePaymentStatus(req.body['order[response][receipt]']).then(() => {
       res.json({ status: true })
     })
   }).catch((err) => {
@@ -419,7 +424,7 @@ router.post("/cancel-order", (req, res) => {
   });
 });
 
-router.get('/wishlist',(req,res)=>{
+router.get('/wishlist', (req, res) => {
   res.render('user/wishlist')
 })
 

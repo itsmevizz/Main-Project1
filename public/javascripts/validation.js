@@ -7,7 +7,7 @@
   var submitError = document.getElementById('submit-error');
   var numberError = document.getElementById('number-error')
   var surNameError = document.getElementById('surname-error')
-
+  var confirmPassword = document.getElementById('confirmpassword-error')
 
   function validateName() {
     var name = document.getElementById('name').value;
@@ -65,6 +65,19 @@
     passwordError.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>';
     return true;
   }
+  function validateConfirmPassword() {
+    var password = document.getElementById('password').value;
+    var confirmPassword = document.getElementById('confirmpassword').value
+    if(password.value == confirmPassword.value){
+      confirmPassword.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>';
+      return true
+    }else{
+      confirmPassword.innerHTML='*'
+      return false;
+    }
+
+  }
+  
   function validateNumber() {
     var number = document.getElementById('number').value;
     if (!number.match(/^(\+\d{1,3}[- ]?)?\d{10}$/)) {
