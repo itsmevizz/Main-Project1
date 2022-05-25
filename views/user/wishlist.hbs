@@ -1,0 +1,60 @@
+<div class="card container mt-4">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-10 cart">
+            <div class="title">
+                <div class="row">
+                    <div class="col">
+                        <h4><b>My Wishlist</b></h4>
+                    </div>
+
+                    <div class="col align-self-center text-right text-muted">{{wishlistCount}}
+                        Items</div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-1">
+            <div class="row g-4">
+                {{!-- From here each --}}
+                {{#each wishlist}}
+                <div class="item-product col-md-3">
+                    <!-- style products default -->
+                    <article class="product-miniature " data-id-product="17" data-id-product-attribute="109" >
+                        <div class="img_block">
+                            <a href="/product-view?id={{this.product._id}}" class="thumbnail product-thumbnail">
+                                <img class="img-responsive first-image" src="/images/{{this.product.img.[0]}}" alt=""
+                                    itemprop="image"/>
+                            </a>
+                             <ul class="product-flag">
+                              <button class="new btn ms-3 "><span>Remove</span></button>
+                            </ul>
+                        </div>
+                        <div class="product_desc">
+                            <h3 itemprop="name"><a href="" class="product_name one_line"
+                                    title="Originals Kaval Windbreaker Winter Jacket 2">{{this.product.Name}}
+                                </a></h3>
+                            <div class="manufacturer"><a href="">{{this.product.Category}}
+                                </a></div>
+                            <div class="product-price-and-shipping">
+                                <span class="sr-only">Regular price</span>
+                                <span class="regular-price">$23.90</span>
+                                <span class="sr-only">Price</span>
+                                <span itemprop="price" class="price price-sale">{{this.product.Price}} </span>
+                                <span class="discount-percentage discount-product">-10%</span>
+                            </div>
+                        </div>
+                        <div class="container align-items-center">
+                            <button type="button" class="btn btn-outline-danger mt-1 rounded" style="width: 200px;"  onclick="addToCart('{{this.product._id}}')">Add
+                                To Cart</button>
+                        </div>
+                    </article>
+                </div>
+                {{/each}}
+                {{!-- /Each --}}
+            </div>
+        </div>
+
+
+    </div>
+</div>

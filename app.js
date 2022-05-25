@@ -53,6 +53,7 @@ app.use(flash());
 app.use("/admin", adminRouter);
 app.use("/", usersRouter);
 var hbs = require("express-handlebars");
+const { error } = require("console");
 
 //db connect
 db.connect((err) => {
@@ -75,7 +76,10 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  // res.render("error");
+    // render the error page
+    //  (err.status || 500);
+    res.render("500",{error:true});
 });
 
 module.exports = app;

@@ -25,7 +25,9 @@ router.get("/", async function (req, res, next) {
   var user = req.session.user;
   var name = req.flash.Name;
   let cartCount = 0;
+  let wishlistCount =0;
   if (req.session.user) {
+    wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
     cartCount = await userHelpers.getCartCount(req.session.user._id);
   }
   let category = await productHelper.getAllCategory();
@@ -38,6 +40,7 @@ router.get("/", async function (req, res, next) {
       user,
       category,
       cartCount,
+      wishlistCount,
       name,
       bannerTop,
       bannerBottom,
@@ -177,7 +180,10 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/category", (req, res) => {
-  res.render("user/category");
+  console.log(req.query);
+  userHelpers.getCategoru(req.query).then(()=>{
+    res.render("user/category");
+  })
 });
 
 router.get("/cart", async (req, res) => {
@@ -235,8 +241,11 @@ router.post("/payment", verifyLogin, async (req, res) => {
   let address = await userHelpers.getUserAddressDetails(req.query.addressId, req.session.user?._id);
   totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
   req.flash.totalAmt = totalAmt
-  userHelpers.placeOrder(address, products, totalAmt, req.query.payment).then((orderId) => {
-    req.flash.orderId = orderId
+  userHelpers.placeOrder(address, products, totalAmt, req.query.payment).then((error, orderId) => {
+    // Not working need to repair
+    if (error) {
+      throw error 
+    } req.flash.orderId = orderId
     if (req.query.payment === "COD") {
       res.json({ codSuccess: true });
     } else if (req.query.payment === 'ONLINE') {
@@ -354,10 +363,14 @@ router.post("/addNewAddress", async (req, res) => {
 });
 
 router.get("/order-list", verifyLogin, async (req, res) => {
+  var name = req.flash.Name;
+  cartCount = 0
+  wishlistCount =0
+  cartCount = await userHelpers.getCartCount(req.session.user?._id);
+  wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
   let user = req.session.user;
   let orders = await userHelpers.userOrders(req.session.user?._id);
-  console.log(orders);
-  res.render("user/order-history", { user, orders });
+  res.render("user/order-history", { user, orders,name, wishlistCount,cartCount });
 });
 
 router.get("/user-profile", verifyLogin, async (req, res) => {
@@ -424,10 +437,50 @@ router.post("/cancel-order", (req, res) => {
   });
 });
 
-router.get('/wishlist', (req, res) => {
-  res.render('user/wishlist')
+router.get('/wishlist',verifyLogin,async (req, res) => {
+  cartCount = 0
+  wishlistCount =0
+  cartCount = await userHelpers.getCartCount(req.session.user?._id);
+  wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
+  userHelpers.getWishListItems(req.session.user?._id).then((wishlist) => {
+    res.render('user/wishlist',{wishlist,cartCount,wishlistCount})
+  }).catch((err)=>{
+    console.log(err);
+  })
 })
 
+
+// Add to wishlist
+
+
+router.get("/add-to-wishlist/:id", async (req, res) => {
+  console.log('\n',req.params.id,'Wishlist id \n');
+  count = await userHelpers.getWishlistCount(req.session.user?._id);
+  if (req.session.user) {
+    userHelpers.addToWishList(req.params.id, req.session.user?._id).then(() => {
+      res.json({ status: true, count});
+      console.log("Wishlist added\n");
+    }).catch(()=>{
+      console.log('\nErrorrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\n');
+      res.json({status:'exist'})
+    });
+  } else {
+    res.json({ status: false });
+  }
+});
+
+// View one Order
+router.get('/view-order',verifyLogin,async(req,res)=>{
+  var name = req.flash.Name;
+  cartCount = 0
+  wishlistCount =0
+  cartCount = await userHelpers.getCartCount(req.session.user?._id);
+  wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
+  userHelpers.getOrderDetails(req.query).then((orderDetails)=>{
+    console.log(orderDetails,'Ordersss');
+    res.render('user/view-order',{orderDetails,name,cartCount,wishlistCount})
+  })
+})
 
 
 module.exports = router;

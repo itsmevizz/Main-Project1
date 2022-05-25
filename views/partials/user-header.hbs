@@ -170,8 +170,8 @@
       </div>
     </div>
   </nav>
-  <div class="header-top top_bg hidden-md-down">
-    <div class="container">
+  <div class="header-top top_bg hidden-md-down  header-bottom">
+    <div class="container ">
       <div class="row">
         <div class=" col col-md-4 col-sm-12">
         </div>
@@ -261,7 +261,8 @@
               <div class="wishtlist_top">
                 <a class="" href="/wishlist">
                   <i class="fa-regular fa-heart"></i>
-                  (<span class="cart-wishlist-number">0</span>)
+                  <span class="cart-wishlist-number" id="wishlist-count">{{wishlistCount}}</span>
+                  {{!-- (<span class="cart-wishlist-number">0</span>) --}}
                 </a>
               </div>
             </div>
@@ -309,7 +310,7 @@
       </div>
 
     </div>
-    <div class="header-bottom">
+    <div class="">
       <div class="container">
         <div id="_desktop_megamenu" class="use-sticky ">
           <div class="pos-menu-horizontal">

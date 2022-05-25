@@ -142,7 +142,7 @@ function placeOrder() {
       method: "post",
       success: (res) => {
         if (res.codSuccess) {
-          location.href='/order-placed'
+          location.href = '/order-placed'
         } else if (PaymentMethod === 'ONLINE') {
           console.log('Razo');
           razorpayPayment(res);
@@ -222,7 +222,7 @@ function varifyPayment(payment, order) {
 function payPalPayment(payment) {
   for (let i = 0; i < payment.links.length; i++) {
     if (payment.links[i].rel === "approval_url") {
-      location.href=(payment.links[i].href)
+      location.href = (payment.links[i].href)
     }
   }
 }
@@ -394,7 +394,7 @@ function deliveryStatus(value, orderId) {
 
 
 // Remove Banner
-function deleteBanner(id){
+function deleteBanner(id) {
   console.log(id);
   Swal.fire({
     title: "Are you sure?",
@@ -433,7 +433,7 @@ function deleteBanner(id){
 
 
 // Desable Banner
-function desableBanner(id){
+function desableBanner(id) {
   console.log(id);
   Swal.fire({
     title: "Are you sure?",
@@ -459,14 +459,49 @@ function desableBanner(id){
               title: "",
               showConfirmButton: false,
               timer: 900,
-            }).then(()=>{
+            }).then(() => {
               location.reload()
             })
-            
+
           }
         },
       });
     }
   });
 
+}
+
+// Wishlist
+
+function addToWishList(proId) {
+  $.ajax({
+    url: "/add-to-wishlist/" + proId,
+    method: "get",
+    success: (response) => {
+      console.log(response);
+      if (response.status === true) {
+        let count = $("#wishlist-count").html();
+        count = parseInt(count) + 1;
+        $("#wishlist-count").html(count);
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'Added to wishlist',
+          showConfirmButton: false,
+          timer: 850
+        })
+      } else if (response.status === 'exist') {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'warning',
+          title: 'Product already exist',
+          showConfirmButton: false,
+          timer: 800
+        })
+      }
+      else {
+        window.location.href = "/user-login";
+      }
+    },
+  });
 }

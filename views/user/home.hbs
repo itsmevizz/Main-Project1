@@ -146,20 +146,21 @@
                             </a>
 
                             <ul class="add-to-links">
-                              <li>
-
-                                <a class="addToWishlist wishlistProd_17" title="Add to wishlist" href="/" data-rel="17"
-                                  onclick="WishlistCart('wishlist_block_list', 'add', '17', false, 1); return false;">
+                              <li class="cart">
+                                <div class="product-add-to-cart">
+                                <a class="addToWishlist wishlistProd_17" id="Wishlist007" title="Add to wishlist" data-rel="17"
+                                  onclick="addToWishList('{{this._id}}')">
                                   Add to wishlist
                                 </a>
-
-
+                                </div>
                               </li>
-                              <li class="quick-view">
-
-                                <a class="quick_view" href="/" title="Quick view">
-                                  <span>Quick view</span>
-                                </a>
+                              <li class="">
+                                <div class="product-add-to-cart">
+                                  <a class="quick_view" href="/product-view?id={{this._id}}" title="Quick view">
+                                    <i class="fa-regular fa-magnifying-glass"></i>
+                                    <span>Quick view</span>
+                                  </a>
+                                </div>
 
                               </li>
                               <li class="cart">
@@ -227,36 +228,7 @@
 
                             </div>
 
-                            <div class="product-desc" itemprop="description">
-                              <ul>
-                                <li>
-                                  <div>Block out the haters with the fresh adidas® Originals Kaval Windbreaker Jacket.
-                                  </div>
-                                </li>
-                                <li>
-                                  <div><em>Part of the Kaval Collection.</em></div>
-                                </li>
-                                <li>
-                                  <div>Regular fit is eased, but not sloppy, and perfect for any activity.</div>
-                                </li>
-                                <li>
-                                  <div>Plain-woven jacket specifically constructed for freedom of movement.</div>
-                                </li>
-                              </ul>
-                            </div>
 
-
-                            <div class="variant-links">
-
-                              <div class="variant-links">
-                                <a href="" class="color" title="White" style="background-color: #ffffff"><span
-                                    class="sr-only">White</span></a>
-                                <a href="" class="color" title="Black" style="background-color: #434A54"><span
-                                    class="sr-only">Black</span></a>
-                                <span class="js-count count"></span>
-                              </div>
-
-                            </div>
 
                           </div>
                         </article>
@@ -449,7 +421,7 @@
               <div class="col-md-3">
                 <div class=" bg-image hover-zoom ripple shadow-1-strong rounded">
 
-                  <a href="/category"> <img src="/images/{{this.img}}" class="w-70" /></a>
+                  <a href="/category/?id={{this._id}}"> <img src="/images/{{this.img}}" class="w-70" /></a>
                 </div>
               </div>
               {{/each}}

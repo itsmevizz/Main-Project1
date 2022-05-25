@@ -1,0 +1,191 @@
+<div class="container ">
+
+    <div class="col">
+        <h4><b>Orders</b></h4>
+    </div>
+    <a class="label" href="/">
+        <i class="material-icons">chevron_left</i>Continue shopping
+    </a>
+</div>
+<div id="wrapper">
+    <div class="container">
+        <div class="row">
+
+            <div id="content" class="col-xs-12">
+                <section id="main">
+                    <div class=" row">
+                        <!-- Left Block: cart product informations & shpping -->
+                        <div class=" col-md-6 col-xs-12 col-lg-8 overflow-auto mb-4 scrollbar scrollbar-rare-wind">
+
+                            <!-- cart products detailed -->
+                            <div class="card">
+                                {{#each orderDetails}}
+
+                                <div class="row">
+                                    <div class="col-md-12 cart">
+                                        <div class="row border-top border-bottom">
+                                            <div class="row main align-items-center">
+                                                <div class="col-2"><img class="img-fluid mt-2 mb-2"
+                                                        src="/images/{{this.product.img.[0]}}" style="height: 100px;">
+                                                </div>
+                                                <div class="col">
+                                                    <div class="row text-muted"></div>
+                                                    <div class="row">{{this.product.Name}}</div>
+                                                </div>
+                                                <div class="col">
+                                                    <div>
+                                                        {{!-- <input type="button" value="-" id="lesss"
+                                                            class="button-minus border rounded-circle  icon-shape icon-sm"
+                                                            data-field="quantity" style="width: 2rem; height: 2rem;"
+                                                            onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../user._id}}',-1)">
+                                                        --}}
+                                                        <span type="number" id="{{this.product._id}}" name="quantity"
+                                                            class="qty quantity-field border-0 text-center w-25 m-1">quantity: {{this.quantity}}</span>
+                                                        {{!-- <input type="button" value="+"
+                                                            class="button-plus border rounded-circle icon-shape icon-sm "
+                                                            data-field="quantity" style="width: 2rem; height: 2rem;"
+                                                            onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../user._id}}',1)">
+                                                        --}}
+                                                    </div>
+                                                </div>
+                                                <div class="col"><span>&#8377;</span> <span
+                                                        id="subTtl">{{this.product.Price}}</span>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                {{/each}}
+                            </div>
+
+                            <!-- shipping informations -->
+
+
+                        </div>
+                        <!-- Right Block: cart subtotal & cart total -->
+                        <div class=" col-md-6 col-xs-12 col-lg-4">
+                            <div class="">
+                                <div class="cart-detailed-totals">
+                                    <hr class="separator">
+
+                                    <div class="card-block">
+                                        <div class="cart-summary-line cart-total">
+                                            <span class="label">Total Paid(tax excl.)</span>
+                                            <span class="value" id="totalAll">{{orderDetails.[0].totalAmount}}</span>
+                                            <span class="value">&#8377;</span>
+                                        </div>
+
+                                        {{!-- <div class="cart-summary-line">
+                                            <small class="label">Taxes</small>
+                                            <small class="value">&#8377;0.00</small>
+                                        </div> --}}
+                                    </div>
+
+                                    <hr class="separator">
+                                </div>
+
+
+                                <div class="checkout text-sm-center card-block">
+                                    <a href="/order-list"><button type="button" class="btn btn-primary" disabled>
+                                            Go Back</button></a>
+
+                                </div>
+
+
+                            </div>
+
+
+
+
+
+                            <div id="block-reassurance">
+                                <ul>
+                                    <li>
+                                        <div class="block-reassurance-item">
+                                            <img src="http://demo.posthemes.com/pos_ecolife_fashion/modules/blockreassurance/img/ic_verified_user_black_36dp_1x.png"
+                                                alt="Security policy (edit with Customer reassurance module)">
+                                            <span class="h6">Security policy (edit with Customer reassurance
+                                                module)</span>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="block-reassurance-item">
+                                            <img src="http://demo.posthemes.com/pos_ecolife_fashion/modules/blockreassurance/img/ic_local_shipping_black_36dp_1x.png"
+                                                alt="Delivery policy (edit with Customer reassurance module)">
+                                            <span class="h6">Delivery policy (edit with Customer reassurance
+                                                module)</span>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="block-reassurance-item">
+                                            <img src="http://demo.posthemes.com/pos_ecolife_fashion/modules/blockreassurance/img/ic_swap_horiz_black_36dp_1x.png"
+                                                alt="Return policy (edit with Customer reassurance module)">
+                                            <span class="h6">Return policy (edit with Customer reassurance
+                                                module)</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </section>
+
+
+
+
+            </div>
+
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+<script type="text/javascript"
+    src="http://demo.posthemes.com/pos_ecolife_fashion/themes/theme_ecolife_fashion1/assets/cache/bottom-e7e67c14.js"></script>
+
+
+
+
+
+<div id="poscompare-notification" class="">
+    <div class="notification-inner">
+        <span class="notification-title"><i class="fa fa-check" aria-hidden="true"></i> Product added to
+            compare.</span>
+    </div>
+</div>
+
+{{!-- for Scrollbar --}}
+<style>
+    .scrollbar-rare-wind::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        background-color: #F5F5F5;
+        border-radius: 10px;
+    }
+
+    .scrollbar-rare-wind::-webkit-scrollbar {
+        width: 12px;
+        background-color: #F5F5F5;
+    }
+
+    .scrollbar-rare-wind::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        background-image: -webkit-gradient(linear, left bottom, left top, from(#a8edea), to(#fed6e3));
+        background-image: -webkit-linear-gradient(bottom, #a8edea 0%, #fed6e3 100%);
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+
+    .scrollbar-rare-wind {
+        scrollbar-color: #a8edea #F5F5F5;
+    }
+</style>
+{{!-- for Scrollbar End--}}

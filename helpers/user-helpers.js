@@ -6,6 +6,8 @@ const { response } = require("../app");
 var objectId = require("mongodb").ObjectId;
 var instance = require('../middleware/razorpay');
 const { resolve } = require("path");
+const { error, log } = require("console");
+const { rejects } = require("assert");
 module.exports = {
   doSignup: (userData) => {
     return new Promise(async (resolve, reject) => {
@@ -374,32 +376,37 @@ module.exports = {
   placeOrder: (order, products, total, method) => {
     console.log('Hi cod');
     return new Promise((resolve, reject) => {
-      let status = method === "COD" ? "placed" : "pending";
-      let orderObj = {
-        userId: objectId(order.userId),
-        deliveryDetails: {
-          Name: order.Name,
-          Mobile: order.Mobile,
-          Address: order.Address,
-          Pincode: order.Pincode,
-          State: order.State,
-          City: order.City,
-        },
-        PaymentMethode: method,
-        products: products,
-        totalAmount: total,
-        status: status,
-        Date: new Date(),
-      };
-      db.get()
-        .collection(collection.ORDER_COLLECTION)
-        .insertOne(orderObj)
-        .then((response) => {
-          db.get()
-            .collection(collection.CART_COLLECTION)
-            .deleteOne({ user: objectId(order.userId) });
+      if (products && total) {
+        let status = method === "COD" ? "placed" : "pending";
+        let orderObj = {
+          userId: objectId(order.userId),
+          deliveryDetails: {
+            Name: order.Name,
+            Mobile: order.Mobile,
+            Address: order.Address,
+            Pincode: order.Pincode,
+            State: order.State,
+            City: order.City,
+          },
+          PaymentMethode: method,
+          products: products,
+          totalAmount: total,
+          status: status,
+          Date: new Date(),
+        };
+        db.get()
+          .collection(collection.ORDER_COLLECTION)
+          .insertOne(orderObj)
+          .then((response) => {
+            db.get()
+              .collection(collection.CART_COLLECTION)
+              .deleteOne({ user: objectId(order.userId) });
             resolve(response.insertedId);
-        });
+          });
+      } else {
+        reject(error)
+      }
+
     });
   },
   getAddressDetails: (userId) => {
@@ -448,8 +455,8 @@ module.exports = {
       let orders = await db
         .get()
         .collection(collection.ORDER_COLLECTION)
-        .find({ userId: objectId(userId)})
-        .sort({_id:-1})
+        .find({ userId: objectId(userId) })
+        .sort({ _id: -1 })
         .toArray();
       resolve(orders);
     });
@@ -532,8 +539,8 @@ module.exports = {
             $set: {
               Name: details.Name,
               Number: details.Number,
-              Email:details.Email,
-              Surname:details.Surname,
+              Email: details.Email,
+              Surname: details.Surname,
             },
           }
         )
@@ -543,88 +550,267 @@ module.exports = {
     });
   },
   cancelOrder: (details) => {
-    return new Promise(async(resolve, reject) => {
-      let order=await db.get().collection(collection.ORDER_COLLECTION).findOne({_id:objectId(details.orderId)})
-      if(order.status == 'pending'){
+    return new Promise(async (resolve, reject) => {
+      let order = await db.get().collection(collection.ORDER_COLLECTION).findOne({ _id: objectId(details.orderId) })
+      if (order.status == 'pending') {
         db.get()
-        .collection(collection.ORDER_COLLECTION)
-        .deleteOne({ _id: objectId(details.orderId) })
-        .then((response) => {
-          console.log(response);
-          resolve({canceled:true});
-        });
-      }else{
+          .collection(collection.ORDER_COLLECTION)
+          .deleteOne({ _id: objectId(details.orderId) })
+          .then((response) => {
+            console.log(response);
+            resolve({ canceled: true });
+          });
+      } else {
         resolve()
       }
     });
   },
   //RazorPay
-  generateRazorpay:(orderId, totalPrice)=>{
-    return new Promise ((resolve, reject)=>{
+  generateRazorpay: (orderId, totalPrice) => {
+    return new Promise((resolve, reject) => {
       var options = {
         amount: totalPrice,  // amount in the smallest currency unit
         currency: "INR",
-        receipt: ""+orderId
+        receipt: "" + orderId
       };
-      instance.orders.create(options, function(err, order) {
+      instance.orders.create(options, function (err, order) {
         resolve(order)
-      }); 
-    }) 
+      });
+    })
   },
-  verifyPayment:(details)=>{
-    return new Promise((resolve,reject)=>{
+  verifyPayment: (details) => {
+    return new Promise((resolve, reject) => {
       const crypto = require('crypto')
-      let hmac = crypto.createHmac('sha256','rbt1OzFQAPzAxBp8hUeYmKni')
+      let hmac = crypto.createHmac('sha256', 'rbt1OzFQAPzAxBp8hUeYmKni')
 
-      hmac.update(details['payment[razorpay_order_id]']+'|'+details['payment[razorpay_payment_id]'])
+      hmac.update(details['payment[razorpay_order_id]'] + '|' + details['payment[razorpay_payment_id]'])
       hmac = hmac.digest('hex')
-      if(hmac ==details['payment[razorpay_signature]']){
+      if (hmac == details['payment[razorpay_signature]']) {
         resolve()
-      }else{
-        reject() 
+      } else {
+        reject()
       }
 
     })
   },
-  changePaymentStatus:((orderId)=>{
-    return new Promise((resolve, reject)=>{
+  changePaymentStatus: ((orderId) => {
+    return new Promise((resolve, reject) => {
       db.get().collection(collection.ORDER_COLLECTION)
-      .updateOne({_id:objectId(orderId)},
-      {
-        $set:{
-          status:'placed'
+        .updateOne({ _id: objectId(orderId) },
+          {
+            $set: {
+              status: 'placed'
+            }
+          }
+        ).then(() => {
+          resolve()
+        })
+    })
+  }),
+
+  // Get the banner
+  getTopBanner: (() => {
+    return new Promise(async (resolve, reject) => {
+      let banner = await db.get()
+        .collection(collection.BANNER_COLLECTION)
+        .aggregate([{ $match: { Position: 'Top', Status: 'Show' } },
+        {
+          $project: { _id: 0, img: 1 }
+        },
+        ]).toArray()
+      resolve(banner)
+    })
+  }),
+
+  getBottomBanner: (() => {
+    return new Promise(async (resolve, reject) => {
+      let banner = await db.get()
+        .collection(collection.BANNER_COLLECTION)
+        .aggregate([{ $match: { Position: 'Bottom', Status: 'Show' } },
+        {
+          $project: { _id: 0, img: 1 }
+        },
+        ]).toArray()
+      resolve(banner)
+    })
+  }),
+
+  // Add To wishlist
+
+  addToWishList: (proId, userId) => {
+    let proObj = {
+      item: objectId(proId),
+      quantity: 1,
+    };
+    return new Promise(async (resolve, reject) => {
+      let userWishlist = await db
+        .get()
+        .collection(collection.WISHLIST_COLLECTION)
+        .findOne({ user: objectId(userId) });
+      if (userWishlist) {
+        let proExist = userWishlist.products.findIndex(
+          (product) => product.item == proId
+        );
+        console.log(proId, 'proId');
+        console.log(proExist);
+        if (proExist != -1) {
+          reject()
+          console.log('nop nop');
+        } else {
+          db.get()
+            .collection(collection.WISHLIST_COLLECTION)
+            .updateOne(
+              { user: objectId(userId) },
+              {
+                $push: { products: proObj },
+              }
+            )
+            .then((response) => {
+              resolve();
+            });
         }
+      } else {
+        let wishlist = {
+          user: objectId(userId),
+          products: [proObj],
+        };
+        db.get()
+          .collection(collection.WISHLIST_COLLECTION)
+          .insertOne(wishlist)
+          .then((response) => {
+            resolve();
+            console.log('New wishlest line 679');
+          });
       }
-      ).then(()=>{
-        resolve()
-      })
-    })
-  }),
+    });
+  },
+  getWishlistCount: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      let count = 0;
+      let wishlist = await db
+        .get()
+        .collection(collection.WISHLIST_COLLECTION)
+        .findOne({ user: objectId(userId) });
+      if (wishlist) {
+        count = wishlist.products.length;
+      }
+      resolve(count);
+    });
+  },
 
-// Get the banner
-  getTopBanner:(()=>{
-    return new Promise(async(resolve, reject)=>{
-      let banner = await db.get()
-      .collection(collection.BANNER_COLLECTION)
-      .aggregate([{$match:{Position:'Top',Status:'Show'}},
-      {
-        $project:{_id:0,img:1}
-      },
-    ]).toArray()
-    resolve(banner)
+  getWishListItems: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      let wishlistItems = await db
+        .get()
+        .collection(collection.WISHLIST_COLLECTION)
+        .aggregate([
+          {
+            $match: { user: objectId(userId) },
+          },
+          {
+            $unwind: "$products",
+          },
+          {
+            $project: {
+              item: "$products.item",
+              quantity: "$products.quantity",
+            },
+          },
+          {
+            $lookup: {
+              from: collection.PRODUCT_COLLECTION,
+              localField: "item",
+              foreignField: "_id",
+              as: "product",
+            },
+          },
+          {
+            $project: {
+              item: 1,
+              quantity: 1,
+              product: { $arrayElemAt: ["$product", 0] },
+            },
+          },
+        ])
+        .toArray();
+      if (!wishlistItems.length==0) {
+        resolve(wishlistItems);
+      }reject(error)
     })
-  }),
+  },
 
-  getBottomBanner:(()=>{
-    return new Promise(async(resolve, reject)=>{
-      let banner = await db.get()
-      .collection(collection.BANNER_COLLECTION)
-      .aggregate([{$match:{Position:'Bottom',Status:'Show'}},
-      {
-        $project:{_id:0,img:1}
-      },
-    ]).toArray()
-    resolve(banner)
+  getOrderDetails: (orderId) => {
+    console.log(orderId,'OrderId\n');
+    return new Promise(async (resolve, reject) => {
+      let orderDetails = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: { _id: objectId(orderId) },
+          },
+          {
+            $unwind: "$products",
+          },
+          {
+            $project: {
+              totalAmount:'$totalAmount',
+              item: "$products.item",
+              quantity: "$products.quantity",
+            },
+          },
+          {
+            $lookup: {
+              from: collection.PRODUCT_COLLECTION,
+              localField: "item",
+              foreignField: "_id",
+              as: "product",
+            },
+          },
+          {
+            $project: {
+              totalAmount:1,
+              item: 1,
+              quantity: 1,
+              product: { $arrayElemAt: ["$product", 0] },
+            },
+          },
+        ])
+        .toArray();
+      if (!orderDetails.length==0) {
+        resolve(orderDetails);
+      }reject(error)
+    })
+    
+  },
+  getCategoru:((categoryId) => {
+    return new Promise(async (resolve, reject) => {
+      let category = await db.get()
+        .collection(collection.CATEGORY_COLLECTION)
+        .aggregate([{ $match: { _id: objectId(categoryId)  } },
+          {
+            $project: {
+              Name: "$Name",},
+          },
+          {
+            $lookup: {
+              from: collection.PRODUCT_COLLECTION,
+              localField: "foo",
+              foreignField: "bar",
+              as:"products"
+            },
+          },
+          {$unwind:"$products"}, 
+          {
+            $project:{
+              Name:1,
+              products:1
+            }
+          },
+          // {$match:{"products.Category":Name}},
+        ]).toArray()
+        console.log(category);
+      resolve(category)
     })
   }),
 };
