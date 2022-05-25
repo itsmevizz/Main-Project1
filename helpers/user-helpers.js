@@ -790,8 +790,11 @@ module.exports = {
       .collection(collection.PRODUCT_COLLECTION)
       .find({Category: categoryName.Name})
       .toArray()
-        console.log(category);
-      resolve(category)
+      if(!category.length==0){
+        resolve(category)
+      }else{
+        reject()
+      }
     })
   }),
 };

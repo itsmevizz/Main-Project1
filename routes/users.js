@@ -180,8 +180,11 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/category", (req, res) => {
-  userHelpers.getCategoru(req.query).then(()=>{
-    res.render("user/category");
+  userHelpers.getCategoru(req.query).then((products)=>{
+    res.render("user/category",{products});
+  }).catch(()=>{
+    console.log('No items');
+    res.redirect('/')
   })
 });
 
