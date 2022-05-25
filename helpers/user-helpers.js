@@ -783,32 +783,13 @@ module.exports = {
     })
     
   },
-  getCategoru:((categoryId) => {
+  getCategoru:((categoryName) => {
+    console.log(categoryName.Name);
     return new Promise(async (resolve, reject) => {
       let category = await db.get()
-        .collection(collection.CATEGORY_COLLECTION)
-        .aggregate([{ $match: { _id: objectId(categoryId)  } },
-          {
-            $project: {
-              Name: "$Name",},
-          },
-          {
-            $lookup: {
-              from: collection.PRODUCT_COLLECTION,
-              localField: "foo",
-              foreignField: "bar",
-              as:"products"
-            },
-          },
-          {$unwind:"$products"}, 
-          {
-            $project:{
-              Name:1,
-              products:1
-            }
-          },
-          // {$match:{"products.Category":Name}},
-        ]).toArray()
+      .collection(collection.PRODUCT_COLLECTION)
+      .find({Category: categoryName.Name})
+      .toArray()
         console.log(category);
       resolve(category)
     })

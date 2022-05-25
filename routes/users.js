@@ -180,7 +180,6 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/category", (req, res) => {
-  console.log(req.query);
   userHelpers.getCategoru(req.query).then(()=>{
     res.render("user/category");
   })
