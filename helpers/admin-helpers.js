@@ -2,6 +2,7 @@ var collection = require("../model/collection");
 var db = require("../config/database");
 const async = require("hbs/lib/async");
 var objectId = require("mongodb").ObjectId;
+let moment = require('moment')
 
 module.exports = {
     addBanner: ((banner, file) => {
@@ -23,7 +24,7 @@ module.exports = {
             let banner = await db.get()
                 .collection(collection.BANNER_COLLECTION)
                 .find()
-                .sort({_id:-1})
+                .sort({ _id: -1 })
                 .toArray();
             resolve(banner)
         })
@@ -67,7 +68,54 @@ module.exports = {
                         }
                     )
 
-            }resolve()
+            } resolve()
+        })
+    }),
+    addCoupon: ((data) => {
+        return new Promise(async (resolve, reject) => {
+            db.get()
+                .collection("coupon")
+                .insertOne(data)
+                .then((response) => {
+                    resolve(response);
+                });
+        });
+    }),
+
+    offerExpiry: ((today) => {
+        let date = moment(today).format('YYYY-MM-DD');
+        return new Promise(async (resolve, reject) => {
+            // Coupon Expired Delete********
+            await db.get().collection(collection.COUPON_COLLECTION).deleteMany({
+                "ExpirationDate": {
+                    $lte: date
+                }
+            })
+
+            resolve()
+        })
+    }),
+
+    getAllCoupons:(()=>{
+        return new Promise(async(resolve,reject)=>{
+            coupon= await db.get()
+            .collection(collection.COUPON_COLLECTION)
+            .find()
+            .toArray()
+            resolve(coupon)  
+        })
+    }),
+
+    removeCoupon:((id)=>{
+        return new Promise (async(resolve, reject)=>{
+            db.get()
+            .collection(collection.COUPON_COLLECTION)
+            .deleteOne({_id:objectId(id.id)})
+
+            resolve()
         })
     })
+
+
+
 }

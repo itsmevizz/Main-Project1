@@ -1,16 +1,17 @@
 
 
-  var nameError = document.getElementById('name-error');
-  var nameOk = document.getElementById("done");
-  var emailError = document.getElementById('email-error');
-  var passwordError = document.getElementById('password-error');
-  var submitError = document.getElementById('submit-error');
-  var numberError = document.getElementById('number-error')
-  var surNameError = document.getElementById('surname-error')
-  var confirmPassword = document.getElementById('confirmpassword-error')
+  let nameError = document.getElementById('name-error');
+  let nameOk = document.getElementById("done");
+  let emailError = document.getElementById('email-error');
+  let passwordError = document.getElementById('password-error');
+  let submitError = document.getElementById('submit-error');
+  let numberError = document.getElementById('number-error')
+  let surNameError = document.getElementById('surname-error')
+  let confirmPassword = document.getElementById('confirmpassword-error')
+  let couponError = document.getElementById('coupon-error')
 
   function validateName() {
-    var name = document.getElementById('name').value;
+    let name = document.getElementById('name').value;
 
     if (name.length == 0) {
       nameError.innerHTML = '*';
@@ -26,7 +27,7 @@
     return true;
   }
     function validateSurName() {
-    var name = document.getElementById('surname').value;
+    let name = document.getElementById('surname').value;
 
     if (!name.match(/^[A-Za-z]{1,12}$/)) {
       surNameError.innerHTML = '*';
@@ -37,7 +38,7 @@
   }
 
   function validateEmail() {
-    var email = document.getElementById('email').value;
+    let email = document.getElementById('email').value;
 
     if (email.length == 0) {
       emailError.innerHTML = '*'
@@ -52,7 +53,7 @@
   }
 
   function validatePassword() {
-    var password = document.getElementById('password').value;
+    let password = document.getElementById('password').value;
     if(password.length ==0){
         return false;
     }
@@ -66,8 +67,8 @@
     return true;
   }
   function validateConfirmPassword() {
-    var password = document.getElementById('password').value;
-    var confirmPassword = document.getElementById('confirmpassword').value
+    let password = document.getElementById('password').value;
+    let confirmPassword = document.getElementById('confirmpassword').value
     if(password.value == confirmPassword.value){
       confirmPassword.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>';
       return true
@@ -79,7 +80,7 @@
   }
   
   function validateNumber() {
-    var number = document.getElementById('number').value;
+    let number = document.getElementById('number').value;
     if (!number.match(/^(\+\d{1,3}[- ]?)?\d{10}$/)) {
       numberError.innerHTML = 'Invalid Number'
       return false;
@@ -106,7 +107,7 @@
   }
 
   function validateBannerName() {
-    var name = document.getElementById('bannerName').value;
+    let name = document.getElementById('bannerName').value;
 
     if (name.length <= 5) {
       nameError.innerHTML = '*';
@@ -128,4 +129,27 @@
     }
     return true;
 
+  }
+  function validateCouponCode() {
+    let code = document.getElementById("couponCode").value
+    if(code.length <=5 && code.length >=15){
+      couponError.innerHTML='*'
+      return false
+    }else if(code.length <=0){
+      couponError.innerHTML ='*'
+      return false
+    }
+    else{
+      couponError.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>';
+      return true
+    }
+    
+  }
+
+  function validateCoupon() {
+    if(!validateCouponCode()){
+      couponError.innerHTML='*'
+      return false
+    }return true
+    
   }

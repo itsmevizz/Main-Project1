@@ -11,6 +11,8 @@ const { getTotalAmount } = require("../helpers/user-helpers");
 var client = require("twilio")(config.accountSID, config.authToken);
 var verifyLogin = require("../middleware/verifySession");
 const paypal = require("paypal-rest-sdk");
+const { disconnect } = require("mongoose");
+const adminHelpers = require("../helpers/admin-helpers");
 
 paypal.configure({
   mode: "sandbox", //sandbox or live
@@ -25,7 +27,11 @@ router.get("/", async function (req, res, next) {
   var user = req.session.user;
   var name = req.flash.Name;
   let cartCount = 0;
-  let wishlistCount =0;
+  let wishlistCount = 0;
+  let today = new Date();
+  await adminHelpers.offerExpiry(today).then((resp) => {
+
+  })
   if (req.session.user) {
     wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
     cartCount = await userHelpers.getCartCount(req.session.user._id);
@@ -179,10 +185,15 @@ router.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-router.get("/category", (req, res) => {
-  userHelpers.getCategoru(req.query).then((products)=>{
-    res.render("user/category",{products});
-  }).catch(()=>{
+router.get("/category", async (req, res) => {
+  var name = req.flash.Name;
+  cartCount = 0
+  wishlistCount = 0
+  cartCount = await userHelpers.getCartCount(req.session.user?._id);
+  wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
+  userHelpers.getCategoru(req.query).then((products) => {
+    res.render("user/category", { products, name, cartCount, wishlistCount });
+  }).catch(() => {
     console.log('No items');
     res.redirect('/')
   })
@@ -231,27 +242,37 @@ router.post("/remove-from-cart", (req, res) => {
 
 router.get("/payment", verifyLogin, async (req, res) => {
   var name = req.flash.Name;
+  let couponcode = req.flash.couponcode
   let address = await userHelpers.getAddressDetails(req.session.user?._id);
   totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
   if (!totalAmt) {
     res.redirect('/')
-  } res.render("user/payment", { totalAmt, user: req.session.user, name, address });
+  } else if (req.flash.discount) {
+    let totalAmt = req.flash.discount
+    res.render("user/payment", { totalAmt, user: req.session.user, name, address, couponcode });
+  } else {
+    res.render("user/payment", { totalAmt, user: req.session.user, name, address });
+  }
 });
 
 router.post("/payment", verifyLogin, async (req, res) => {
   let products = await userHelpers.getCartProductList(req.session.user?._id);
   let address = await userHelpers.getUserAddressDetails(req.query.addressId, req.session.user?._id);
-  totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
-  req.flash.totalAmt = totalAmt
-  userHelpers.placeOrder(address, products, totalAmt, req.query.payment).then((error, orderId) => {
-    // Not working need to repair
-    if (error) {
-      throw error 
-    } req.flash.orderId = orderId
+  if (req.flash.discount) {
+    totalAmt = req.flash.discount
+    req.flash.totalAmt = req.flash.disconnect
+    totalPrice = totalAmt * 100
+  } else {
+    totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
+    req.flash.totalAmt = totalAmt
+  }
+  userHelpers.placeOrder(address, products, totalAmt, req.query.payment).then((orderId) => {
+    req.flash.couponcode = ""
+    req.flash.discount = false
+    req.flash.orderId = orderId
     if (req.query.payment === "COD") {
       res.json({ codSuccess: true });
     } else if (req.query.payment === 'ONLINE') {
-      totalPrice = totalAmt * 100
       userHelpers.generateRazorpay(orderId, totalPrice).then((response) => {
         console.log('\n line 232');
         response.user = req.session?.user
@@ -367,12 +388,12 @@ router.post("/addNewAddress", async (req, res) => {
 router.get("/order-list", verifyLogin, async (req, res) => {
   var name = req.flash.Name;
   cartCount = 0
-  wishlistCount =0
+  wishlistCount = 0
   cartCount = await userHelpers.getCartCount(req.session.user?._id);
   wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
   let user = req.session.user;
   let orders = await userHelpers.userOrders(req.session.user?._id);
-  res.render("user/order-history", { user, orders,name, wishlistCount,cartCount });
+  res.render("user/order-history", { user, orders, name, wishlistCount, cartCount });
 });
 
 router.get("/user-profile", verifyLogin, async (req, res) => {
@@ -435,18 +456,20 @@ router.post("/cancel-order", (req, res) => {
   userHelpers.cancelOrder(req.body).then((response) => {
     if (response) {
       res.json(response);
-    } else res.json({ status: true });
-  });
+    }
+  }).catch(() => {
+    res.json({ status: true });
+  })
 });
 
-router.get('/wishlist',verifyLogin,async (req, res) => {
+router.get('/wishlist', verifyLogin, async (req, res) => {
   cartCount = 0
-  wishlistCount =0
+  wishlistCount = 0
   cartCount = await userHelpers.getCartCount(req.session.user?._id);
   wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
   userHelpers.getWishListItems(req.session.user?._id).then((wishlist) => {
-    res.render('user/wishlist',{wishlist,cartCount,wishlistCount})
-  }).catch((err)=>{
+    res.render('user/wishlist', { wishlist, cartCount, wishlistCount })
+  }).catch((err) => {
     console.log(err);
   })
 })
@@ -456,15 +479,15 @@ router.get('/wishlist',verifyLogin,async (req, res) => {
 
 
 router.get("/add-to-wishlist/:id", async (req, res) => {
-  console.log('\n',req.params.id,'Wishlist id \n');
+  console.log('\n', req.params.id, 'Wishlist id \n');
   count = await userHelpers.getWishlistCount(req.session.user?._id);
   if (req.session.user) {
     userHelpers.addToWishList(req.params.id, req.session.user?._id).then(() => {
-      res.json({ status: true, count});
+      res.json({ status: true, count });
       console.log("Wishlist added\n");
-    }).catch(()=>{
+    }).catch(() => {
       console.log('\nErrorrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\n');
-      res.json({status:'exist'})
+      res.json({ status: 'exist' })
     });
   } else {
     res.json({ status: false });
@@ -472,15 +495,45 @@ router.get("/add-to-wishlist/:id", async (req, res) => {
 });
 
 // View one Order
-router.get('/view-order',verifyLogin,async(req,res)=>{
+router.get('/view-order', verifyLogin, async (req, res) => {
   var name = req.flash.Name;
   cartCount = 0
-  wishlistCount =0
+  wishlistCount = 0
   cartCount = await userHelpers.getCartCount(req.session.user?._id);
   wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
-  userHelpers.getOrderDetails(req.query).then((orderDetails)=>{
-    console.log(orderDetails,'Ordersss');
-    res.render('user/view-order',{orderDetails,name,cartCount,wishlistCount})
+  userHelpers.getOrderDetails(req.query).then((orderDetails) => {
+    console.log(orderDetails, 'Ordersss');
+    res.render('user/view-order', { orderDetails, name, cartCount, wishlistCount })
+  })
+})
+
+// coupon
+router.post('/validate-coupon', verifyLogin, async (req, res) => {
+  console.log(req.body, 'Hi');
+  let totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
+  userHelpers.validateCoupon(req.body, req.session.user?._id).then((couponDtls) => {
+    let percentage = parseInt(couponDtls.Percentage)
+    let discount = totalAmt * percentage / 100
+    console.log(discount, 'less');
+    req.flash.couponcode = couponDtls.CouponCode
+    req.flash.discount = discount
+    res.json({ status: true })
+  }).catch((response) => {
+    if (response.used) {
+      res.json({ usedCoupon: true })
+    } else if (!response.valid)
+      res.json({ status: false })
+  })
+})
+
+// Remove Coupon
+router.post('/remove-coupon', (req, res) => {
+  console.log('Hi');
+  console.log(req.body);
+  userHelpers.removeCoupon(req.body, req.session.user?._id).then(() => {
+    res.json({ status: true })
+    req.flash.couponcode = ""
+    req.flash.discount = false
   })
 })
 

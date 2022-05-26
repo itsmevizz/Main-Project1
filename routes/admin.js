@@ -346,4 +346,29 @@ router.post('/desable-banner',(req,res)=>{
   })
 })
 
+// Coupon Manage
+
+router.get('/coupons',async(req,res)=>{
+  let coupons = await adminHelpers.getAllCoupons().then((coupons)=>{
+  res.render('admin/coupon',{admin:true, coupons})
+  
+  })
+})
+
+router.post('/add-coupon',(req,res)=>{
+  adminHelpers.addCoupon(req.body).then(()=>{
+    res.redirect('/admin/coupons')
+  })
+})
+
+router.post('/remove-coupon',async(req,res)=>{
+  console.log(req.body);
+  await adminHelpers.removeCoupon(req.body).then(()=>{
+  console.log('/*/*/*/*');
+    res.json({satus:true})
+  })
+})
+
+
+
 module.exports = router;

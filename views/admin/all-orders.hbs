@@ -241,8 +241,10 @@
                                             <td>{{this.totalAmount}}</td>
                                             {{!-- <a href="/admin/cancelOrder/{{this._id}}" class="btn btn-success"></a>
                                             --}}
-                                            <td> <a href="/admin/product-details/{{this._id}}"
-                                                    class="btn btn-success">Details</a>
+                                            <td> <a href="/view-order/?id={{this._id}}">
+                                                    <button class="btn btn-success btn-sm" type="button">
+                                                        DETAILS</button>
+                                                </a>
                                             </td>
                                             {{!-- <td><i class="fa fa-ellipsis-h text-black-50"></i></td> --}}
                                             <td>{{this.paymentMethode}}</td>

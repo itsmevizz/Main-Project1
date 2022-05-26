@@ -403,10 +403,7 @@ module.exports = {
               .deleteOne({ user: objectId(order.userId) });
             resolve(response.insertedId);
           });
-      } else {
-        reject(error)
-      }
-
+      } 
     });
   },
   getAddressDetails: (userId) => {
@@ -561,7 +558,7 @@ module.exports = {
             resolve({ canceled: true });
           });
       } else {
-        resolve()
+        reject()
       }
     });
   },
@@ -733,14 +730,14 @@ module.exports = {
           },
         ])
         .toArray();
-      if (!wishlistItems.length==0) {
+      if (!wishlistItems.length == 0) {
         resolve(wishlistItems);
-      }reject(error)
+      } reject(error)
     })
   },
 
   getOrderDetails: (orderId) => {
-    console.log(orderId,'OrderId\n');
+    console.log(orderId, 'OrderId\n');
     return new Promise(async (resolve, reject) => {
       let orderDetails = await db
         .get()
@@ -754,7 +751,7 @@ module.exports = {
           },
           {
             $project: {
-              totalAmount:'$totalAmount',
+              totalAmount: '$totalAmount',
               item: "$products.item",
               quantity: "$products.quantity",
             },
@@ -769,7 +766,7 @@ module.exports = {
           },
           {
             $project: {
-              totalAmount:1,
+              totalAmount: 1,
               item: 1,
               quantity: 1,
               product: { $arrayElemAt: ["$product", 0] },
@@ -777,24 +774,71 @@ module.exports = {
           },
         ])
         .toArray();
-      if (!orderDetails.length==0) {
+      if (!orderDetails.length == 0) {
         resolve(orderDetails);
-      }reject(error)
+      } reject(error)
     })
-    
+
   },
-  getCategoru:((categoryName) => {
+  getCategoru: ((categoryName) => {
     console.log(categoryName.Name);
     return new Promise(async (resolve, reject) => {
       let category = await db.get()
-      .collection(collection.PRODUCT_COLLECTION)
-      .find({Category: categoryName.Name})
-      .toArray()
-      if(!category.length==0){
+        .collection(collection.PRODUCT_COLLECTION)
+        .find({ Category: categoryName.Name })
+        .toArray()
+      if (!category.length == 0) {
         resolve(category)
-      }else{
+      } else {
         reject()
       }
     })
   }),
+  validateCoupon: ((code, userId) => {
+    return new Promise(async (resolve, reject) => {
+      let coupon = await db.get()
+        .collection(collection.COUPON_COLLECTION)
+        .findOne({ CouponCode: code.code })
+      if (coupon) {
+        let checkUser = await db.get()
+          .collection(collection.COUPON_COLLECTION)
+          .findOne({ users:{user:objectId(userId)}})
+        if (!checkUser) {
+          console.log('\n Coupon ok \n');
+          await db.get()
+          .collection(collection.COUPON_COLLECTION)
+          .updateOne(
+            { _id: objectId(coupon._id) },
+            {
+              $push:{users:{user:objectId(userId)}}
+            }
+          )
+          resolve(coupon)
+        }else{
+          reject({used:true})
+        }
+      } reject({valid:false})
+    })
+  }),
+
+  removeCoupon:((code,userId)=>{
+    console.log('Hi remove');
+    return new Promise(async(resolve,reject)=>{
+      let lo =await db.get()
+      .collection(collection.COUPON_COLLECTION)
+      .findOne({CouponCode:code.couponCode})
+      let foo=await db.get()
+      .collection(collection.COUPON_COLLECTION)
+      .updateOne(
+        { _id: objectId(lo?._id)},
+        {
+          $pull: { users: { user: objectId(userId) } },
+        }
+      )
+      resolve()
+    })
+  })
+
+  
+
 };

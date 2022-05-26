@@ -347,7 +347,7 @@ function cancelOrder(orderId) {
         },
         method: "post",
         success: (response) => {
-          if (response) {
+          if (!response.status) {
             Swal.fire(
               "Deleted!",
               "Your order has been canceled .",
@@ -357,6 +357,14 @@ function cancelOrder(orderId) {
                 location.reload();
               }
             });
+          }else{
+            Swal.fire({
+              position: "center",
+              icon: "warning",
+              title: "Product is placed",
+              showConfirmButton: false,
+              timer: 1000,
+            })
           }
         },
       });
@@ -503,5 +511,88 @@ function addToWishList(proId) {
         window.location.href = "/user-login";
       }
     },
+  });
+}
+
+// Coupon
+
+$("#couponValidate").submit((e) => {
+  e.preventDefault();
+  if (validateCoupon(true)) {
+    $.ajax({
+      url: "/validate-coupon",
+      method: "post",
+      data: $("#couponValidate").serialize(),
+      success: (response) => {
+        if (response.status) {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Coupon added",
+            showConfirmButton: false,
+            timer: 1000,
+          }).then(()=>{
+          location.reload()
+          })
+        }else if(response.usedCoupon){
+          Swal.fire({
+            icon: 'warning',
+            title: 'Oops...',
+            text: 'coupon used!',
+          })
+        }
+        else{
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'wrong! coupon code',
+          })
+        }
+      },
+    });
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Please give the required",
+    });
+  }
+});
+
+function removeCoupon(code){
+  $.ajax({
+    url: "/remove-coupon",
+    data:{
+      couponCode : code
+    },
+    method: "post",
+    success: (response) => {
+      location.reload()
+    }
+  })
+}
+
+function deleteCoupon(iD){
+  Swal.fire({
+    title: "Are you sure?",
+    text: "",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/admin/remove-coupon",
+        data: {
+          id:iD
+        },
+        method: "post",
+        success: (response) => {
+          location.reload()
+        },
+      });
+    }
   });
 }
