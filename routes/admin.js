@@ -11,7 +11,6 @@ const { getAllProducts } = require("../helpers/products.helpers");
 const async = require("hbs/lib/async");
 const { trusted } = require("mongoose");
 const adminHelpers = require('../helpers/admin-helpers')
-
 /* GET users listing. */
 router.get("/", function (req, res, next) {
   if (req.session.admin) {
@@ -304,9 +303,9 @@ router.get('/getChartData', async (req, res) => {
 })
 
 // Banner Managment
-router.get('/bannermanage',(req,res)=>{
+router.get('/bannermanage', (req, res) => {
   let success = req.flash.success
-  res.render('admin/bannermanagement',{admin:true,failed: req.flash.failed,success})
+  res.render('admin/bannermanagement', { admin: true, failed: req.flash.failed, success })
   req.flash.failed = false;
   req.flash.success = false;
 })
@@ -325,47 +324,53 @@ router.post('/add-banner', uploadBanner.single('Image'), (req, res) => {
 
 // View Banner
 
-router.get('/view-banners',async(req,res)=>{
-  let banners =await adminHelpers.getBanners()
+router.get('/view-banners', async (req, res) => {
+  let banners = await adminHelpers.getBanners()
   console.log(banners);
-  res.render('admin/view-banners',{admin:true, banners})
+  res.render('admin/view-banners', { admin: true, banners })
 })
 
 // Delete banner
-router.post('/delete-banner',(req,res)=>{
-  console.log(req.body,'Helloo');
-  adminHelpers.removeBanner(req.body).then(()=>{
-    res.json({bannerRemoved:true})
+router.post('/delete-banner', (req, res) => {
+  console.log(req.body, 'Helloo');
+  adminHelpers.removeBanner(req.body).then(() => {
+    res.json({ bannerRemoved: true })
   })
 })
 
 // Desable banner
-router.post('/desable-banner',(req,res)=>{
-  adminHelpers.hideandShowBanner(req.body).then(()=>{
-    res.json({bannerDesabled:true})
+router.post('/desable-banner', (req, res) => {
+  adminHelpers.hideandShowBanner(req.body).then(() => {
+    res.json({ bannerDesabled: true })
   })
 })
 
 // Coupon Manage
 
-router.get('/coupons',async(req,res)=>{
-  let coupons = await adminHelpers.getAllCoupons().then((coupons)=>{
-  res.render('admin/coupon',{admin:true, coupons})
-  
+router.get('/coupons', async (req, res) => {
+  let coupons = await adminHelpers.getAllCoupons().then((coupons) => {
+    res.render('admin/coupon', { admin: true, coupons,failed:req.flash.failed })
+    req.flash.failed = false
+
   })
 })
 
-router.post('/add-coupon',(req,res)=>{
-  adminHelpers.addCoupon(req.body).then(()=>{
-    res.redirect('/admin/coupons')
+router.post('/add-coupon', (req, res) => {
+  adminHelpers.addCoupon(req.body).then((response) => {
+    if (response) {
+      res.redirect('/admin/coupons')
+    } else {
+      req.flash.failed = 'Coupon already there'
+      res.redirect('/admin/coupons')
+    }
   })
 })
 
-router.post('/remove-coupon',async(req,res)=>{
+router.post('/remove-coupon', async (req, res) => {
   console.log(req.body);
-  await adminHelpers.removeCoupon(req.body).then(()=>{
-  console.log('/*/*/*/*');
-    res.json({satus:true})
+  await adminHelpers.removeCoupon(req.body).then(() => {
+    console.log('/*/*/*/*');
+    res.json({ satus: true })
   })
 })
 

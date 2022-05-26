@@ -27,6 +27,7 @@
     "multer": "^1.4.4",
     "paypal-rest-sdk": "^1.8.1",
     "razorpay": "^2.8.1",
+    "referral-code-generator": "^1.0.8",
     "sweetalert2": "^11.4.14",
     "twilio": "^3.77.0"
   }

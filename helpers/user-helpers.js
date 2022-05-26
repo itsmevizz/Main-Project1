@@ -546,14 +546,33 @@ module.exports = {
         });
     });
   },
-  cancelOrder: (details) => {
+  cancelOrder: (details, userId) => {
     return new Promise(async (resolve, reject) => {
+      console.log(details);
+      let walletData ={}
       let order = await db.get().collection(collection.ORDER_COLLECTION).findOne({ _id: objectId(details.orderId) })
-      if (order.status == 'pending') {
+      walletData.Amount=order.totalAmount
+      walletData.userId = objectId(userId)
+      console.log(walletData);
+      console.log(order);
+      if (!order.status == 'Shipped'|| 'Delivered') {
         db.get()
           .collection(collection.ORDER_COLLECTION)
           .deleteOne({ _id: objectId(details.orderId) })
-          .then((response) => {
+          .then(async(response) => {
+            let userWallet =await db.get() 
+            .collection(collection.WALLET_COLLECTION)
+            .findOne({userId:objectId(userId)})
+            if (!userWallet) {
+              console.log('No wallet');
+              await db.get()
+            .collection(collection.WALLET_COLLECTION)
+            .insertOne(walletData)
+            }else{
+              // await db.get()
+              // .collection(collection.WALLET_COLLECTION)
+              // .findOne({userId:})
+            }
             console.log(response);
             resolve({ canceled: true });
           });
@@ -799,10 +818,18 @@ module.exports = {
       let coupon = await db.get()
         .collection(collection.COUPON_COLLECTION)
         .findOne({ CouponCode: code.code })
+        console.log(coupon._id);
       if (coupon) {
         let checkUser = await db.get()
           .collection(collection.COUPON_COLLECTION)
-          .findOne({ users:{user:objectId(userId)}})
+          .findOne( {
+            CouponCode:code.code,
+            users: {
+              $elemMatch: {
+                user: objectId(userId)
+              }
+            }
+          })
         if (!checkUser) {
           console.log('\n Coupon ok \n');
           await db.get()
@@ -817,7 +844,8 @@ module.exports = {
         }else{
           reject({used:true})
         }
-      } reject({valid:false})
+      } 
+      reject({valid:false})
     })
   }),
 

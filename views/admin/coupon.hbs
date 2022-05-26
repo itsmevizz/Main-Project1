@@ -148,11 +148,24 @@
             <div data-i18n="Basic">Orders</div>
           </a>
         </li>
-        <li class="menu-item">
-          <a href="/admin/coupons" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-collection"></i>
-            <div data-i18n="Basic">Coupon</div>
+        <li class="menu-item  active open">
+          <a href="" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bx-layout"></i>
+            <div data-i18n="Layouts">Offer management</div>
           </a>
+
+          <ul class="menu-sub">
+            <li class="menu-item active">
+              <a href="/admin/coupons" class="menu-link">
+                <div data-i18n="Without menu">Coupons</div>
+              </a>
+            </li>
+            <li class="menu-item ">
+              <a href="/admin/category-offers" class="menu-link">
+                <div data-i18n="Without navbar">Category offers</div>
+              </a>
+            </li>
+          </ul>
         </li>
         <li class="menu-item">
           <a href="/admin/chartdata" class="menu-link">
@@ -215,17 +228,21 @@
                   <label for="exampleFormControlInput1" class="form-label">Coupon Code</label>
                   <input type="text" name="CouponCode" class="form-control" required />
                 </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label">Percentage</label>
+                  <input type="number" name="Percentage" class="form-control" required />
+                </div>
                 <div>
                   <label for="exampleFormControlTextarea1" class="form-label">Expiration date</label>
-                  <input type="date" class="form-control" name="ExpirationDate" rows="3" required/>
+                  <input type="date" class="form-control" name="ExpirationDate" rows="3" required />
                 </div>
-                {{!-- {{#if failed}}
+                {{#if failed}}
                 <p class="text-danger">{{failed}}</p>
                 {{else}}
                 {{#if success}}
                 <p class="text-success">{{success}}</p>
                 {{/if}}
-                {{/if}} --}}
+                {{/if}}
                 <button type="submit" class="btn btn-success mt-2">Submit</button>
             </div>
             </form>
@@ -234,48 +251,48 @@
       </div>
       <section>
         <div class="container-xxl flex-grow-1 container-p-y">
-                <!-- Basic Bootstrap Table -->
-                <div class="card">
-                    <h5 class="card-header">COUPONS</h5>
-                    <div class="table-responsive text-nowrap">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Code</th>
-                                    <th>Exp</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            {{#each coupons}}
-                            <tbody class="table-border-bottom-0">
-                                <tr>
-                                    <td>{{inc @index}}</td>
-                                    <td> {{this.CouponCode}}</td>
-                                    <td>{{this.ExpirationDate}}</td>
-                                    <td>
-                                        <div>
-                                            {{!-- <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                onclick="editCoupon('{{this._id}}')">
-                                                <span class="badge bg-label-success me-1">Edit</span>
-                                            </button> --}}
-                                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                onclick="deleteCoupon('{{this._id}}')">
-                                                <span class="badge bg-label-danger me-1">Delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            {{/each}}
-                        </table>
-                    </div>
-                </div>
+          <!-- Basic Bootstrap Table -->
+          <div class="card">
+            <h5 class="card-header">COUPONS</h5>
+            <div class="table-responsive text-nowrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Code</th>
+                    <th>Exp</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                {{#each coupons}}
+                <tbody class="table-border-bottom-0">
+                  <tr>
+                    <td>{{inc @index}}</td>
+                    <td> {{this.CouponCode}}</td>
+                    <td>{{this.ExpirationDate}}</td>
+                    <td>
+                      <div>
+                        {{!-- <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                          onclick="editCoupon('{{this._id}}')">
+                          <span class="badge bg-label-success me-1">Edit</span>
+                        </button> --}}
+                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                          onclick="deleteCoupon('{{this._id}}')">
+                          <span class="badge bg-label-danger me-1">Delete</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+                {{/each}}
+              </table>
             </div>
-            <!--/ Basic Bootstrap Table -->
+          </div>
+        </div>
+        <!--/ Basic Bootstrap Table -->
       </section>
 
-      
+
 
       <!-- / Layout wrapper -->
 

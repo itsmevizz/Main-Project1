@@ -7,7 +7,7 @@
   let submitError = document.getElementById('submit-error');
   let numberError = document.getElementById('number-error')
   let surNameError = document.getElementById('surname-error')
-  let confirmPassword = document.getElementById('confirmpassword-error')
+  let confirmPasswordError = document.getElementById('confirmpassword-error')
   let couponError = document.getElementById('coupon-error')
 
   function validateName() {
@@ -69,12 +69,13 @@
   function validateConfirmPassword() {
     let password = document.getElementById('password').value;
     let confirmPassword = document.getElementById('confirmpassword').value
-    if(password.value == confirmPassword.value){
-      confirmPassword.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>';
-      return true
-    }else{
-      confirmPassword.innerHTML='*'
+    if(confirmPassword.length == 0){
+      confirmPasswordError.innerHTML='*'
       return false;
+    }
+    else if(confirmPassword === password){
+      confirmPasswordError.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>';
+      return true
     }
 
   }
@@ -89,7 +90,7 @@
     return true;
   }
   function validateProfile() {
-    if (!validateName() || !validateEmail() || !validateNumber()) {
+    if (!validateName() || !validateEmail() || !validateNumber())  {
 
       return false;
     }
@@ -98,7 +99,7 @@
   }
 
   function changePassword(){
-      if(!validatePassword()){
+      if(!validatePassword()||!validateConfirmPassword()){
           passwordError.innerHTML = '*';
           setTimeout(function () { passwordError.innerHTML = ''; }, 2000);
           return false;

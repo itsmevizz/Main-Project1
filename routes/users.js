@@ -453,7 +453,7 @@ router.post('/change-userPassword', (req, res) => {
 
 router.post("/cancel-order", (req, res) => {
   // console.log(req.body.orderId, 'jjkkklll');
-  userHelpers.cancelOrder(req.body).then((response) => {
+  userHelpers.cancelOrder(req.body, req.session.user?._id).then((response) => {
     if (response) {
       res.json(response);
     }

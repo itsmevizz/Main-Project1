@@ -73,12 +73,22 @@ module.exports = {
     }),
     addCoupon: ((data) => {
         return new Promise(async (resolve, reject) => {
-            db.get()
+            checkCoupon =await db.get()
+            .collection (collection.COUPON_COLLECTION)
+            .find({CouponCode:data.CouponCode})
+            .toArray()
+
+            console.log(checkCoupon);
+            if(!checkCoupon.length ==1){
+                db.get()
                 .collection("coupon")
                 .insertOne(data)
                 .then((response) => {
                     resolve(response);
                 });
+            }else{
+                resolve()
+            }
         });
     }),
 
@@ -101,6 +111,7 @@ module.exports = {
             coupon= await db.get()
             .collection(collection.COUPON_COLLECTION)
             .find()
+            .sort({_id:-1})
             .toArray()
             resolve(coupon)  
         })

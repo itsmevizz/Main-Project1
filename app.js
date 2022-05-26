@@ -1,19 +1,19 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var hbs = require("express-handlebars");
-var session = require("express-session");
-var bodyParser = require("body-parser");
-var db = require("./config/database");
-var flash = require("connect-flash");
-var helpers = require("handlebars-helpers")();
+let createError = require("http-errors");
+let express = require("express");
+let path = require("path");
+let cookieParser = require("cookie-parser");
+let logger = require("morgan");
+let hbs = require("express-handlebars");
+let session = require("express-session");
+let bodyParser = require("body-parser");
+let db = require("./config/database");
+let flash = require("connect-flash");
+let helpers = require("handlebars-helpers")();
 
-var adminRouter = require("./routes/admin");
-var usersRouter = require("./routes/users");
+let adminRouter = require("./routes/admin");
+let usersRouter = require("./routes/users");
 
-var app = express();
+let app = express();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -52,7 +52,6 @@ app.use(flash());
 
 app.use("/admin", adminRouter);
 app.use("/", usersRouter);
-var hbs = require("express-handlebars");
 const { error } = require("console");
 
 //db connect
