@@ -1,8 +1,15 @@
 <div class="container rounded bg-white mt-5 mb-5 fs-6 fw-bold">
+  <section>
+    <h6 class="fw-bold">Refer someone and earn wallet points</h6>
+    <input type="text" class="rounded border border-primary border-3" style="font-size: smaller;" id="copyText">
+    <button id="copyBtn" class="rounded  border btn-success"><i class="fa-solid fa-copy"></i>Copy </button>
+    <button onclick="referralGenerate()" class="btn-info rounded border"><i
+        class="fa-solid fa-code"></i>Generate</button>
+  </section>
   <section class="d-flex justify-content-end">
     <div class=" align-items-center">
       <h4 class="fw-bold">My Wallet</h4>
-      <h1  class="me-2 text-danger">rs. 500</h1>
+      <h1 class="me-2 text-danger">rs.{{wallet}} </h1>
     </div>
   </section>
   <div class="row">
@@ -27,11 +34,11 @@
           </div>
           <span id="confirmpassword-error" class="text-danger"></span>
           <input type="text " name="userId" value="{{user._id}}" hidden>
-          <div class="mt-1 "><button class="btn btn-primary profile-button"  onclick=return"changePassword()"
+          <div class="mt-1 "><button class="btn btn-primary profile-button" onclick=return "changePassword()"
               type="submit">Change Password</button></div>
         </div>
       </form>
-      <div class="mt-1 "><button class="btn btn-primary profile-button" id="btnshow" onclick="changeVisibility()">Change
+      <div class="mt-1 "><button class="btn btn-primary profile-button" id="btnshow">Change
           Password</button></div>
     </div>
     <div class="col-md-5 border-right">
@@ -120,21 +127,33 @@
   $(document).ready(function () {
     const form = document.getElementById('changePassword-form');
     form.style.display = 'none';
-
   })
-  function changeVisibility() {
+  const btn = document.getElementById('btnshow')
+  btn.onclick = () => {
+    console.log('Hi')
     const form = document.getElementById('changePassword-form');
-    const btn =document.getElementById('btnshow')
 
+    console.log('Hi click')
     if (form.style.display === 'none') {
+
       // 👇️ this SHOWS the form
       form.style.display = 'block';
-      btn.style.display ='none'
+      btn.style.display = 'none'
     } else {
       // 👇️ this HIDES the form
       form.style.display = 'none';
-      btn.style.display ='block'
+      btn.style.display = 'block'
     }
-
   }
+
+
+
+  const copyBtn = document.getElementById('copyBtn')
+  const copyText = document.getElementById('copyText')
+  copyBtn.onclick = () => {
+    copyText.select();    // Selects the text inside the input
+    document.execCommand('copy');    // Simply copies the selected text to clipboard 
+  }
+
+
 </script>

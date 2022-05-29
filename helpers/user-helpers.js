@@ -8,10 +8,13 @@ var instance = require('../middleware/razorpay');
 const { resolve } = require("path");
 const { error, log } = require("console");
 const { rejects } = require("assert");
+const moment = require('moment');
+const { use } = require("../routes/admin");
 module.exports = {
   doSignup: (userData) => {
     return new Promise(async (resolve, reject) => {
       let response = {};
+      let wallet = {}
       userData.Status = "active";
       let email = await db
         .get()
@@ -22,8 +25,28 @@ module.exports = {
         db.get()
           .collection(collection.USER_COLLECTION)
           .insertOne(userData)
-          .then((data) => {
+          .then(async (data) => {
             if (data) {
+              wallet.userId = data.insertedId
+              wallet.Amount = 0
+              await db.get()
+                .collection(collection.WALLET_COLLECTION)
+                .insertOne(wallet)
+              let validateReferral = await db.get()
+                .collection(collection.USER_COLLECTION)
+                .findOne({ Referral: userData.referral })
+              if (validateReferral) {
+                await db.get()
+                  .collection(collection.WALLET_COLLECTION)
+                  .updateOne({ userId: objectId(validateReferral._id) }, {
+                    $inc: { Amount: 100 }
+                  })
+                await db.get()
+                  .collection(collection.WALLET_COLLECTION)
+                  .updateOne({ userId: objectId(data.insertedId) }, {
+                    $inc: { Amount: 50 }
+                  })
+              }
               response.user = userData.Name;
               resolve(response);
             } else {
@@ -373,37 +396,37 @@ module.exports = {
         });
     });
   },
-  placeOrder: (order, products, total, method) => {
+  placeOrder: (order, products, total, actualAmnt, fromWallet, method) => {
     console.log('Hi cod');
     return new Promise((resolve, reject) => {
-      if (products && total) {
-        let status = method === "COD" ? "placed" : "pending";
-        let orderObj = {
-          userId: objectId(order.userId),
-          deliveryDetails: {
-            Name: order.Name,
-            Mobile: order.Mobile,
-            Address: order.Address,
-            Pincode: order.Pincode,
-            State: order.State,
-            City: order.City,
-          },
-          PaymentMethode: method,
-          products: products,
-          totalAmount: total,
-          status: status,
-          Date: new Date(),
-        };
-        db.get()
-          .collection(collection.ORDER_COLLECTION)
-          .insertOne(orderObj)
-          .then((response) => {
-            db.get()
-              .collection(collection.CART_COLLECTION)
-              .deleteOne({ user: objectId(order.userId) });
-            resolve(response.insertedId);
-          });
-      } 
+      let status = method === "COD" ? "placed" : "pending";
+      let orderObj = {
+        userId: objectId(order.userId),
+        deliveryDetails: {
+          Name: order.Name,
+          Mobile: order.Mobile,
+          Address: order.Address,
+          Pincode: order.Pincode,
+          State: order.State,
+          City: order.City,
+        },
+        PaymentMethode: method,
+        products: products,
+        totalAmount: total,
+        actualAmount: actualAmnt,
+        fromWallet: fromWallet,
+        status: status,
+        Date: new Date(),
+      };
+      db.get()
+        .collection(collection.ORDER_COLLECTION)
+        .insertOne(orderObj)
+        .then((response) => {
+          db.get()
+            .collection(collection.CART_COLLECTION)
+            .deleteOne({ user: objectId(order.userId) });
+          resolve(response.insertedId);
+        });
     });
   },
   getAddressDetails: (userId) => {
@@ -548,36 +571,48 @@ module.exports = {
   },
   cancelOrder: (details, userId) => {
     return new Promise(async (resolve, reject) => {
-      console.log(details);
-      let walletData ={}
+      let walletData = {}
       let order = await db.get().collection(collection.ORDER_COLLECTION).findOne({ _id: objectId(details.orderId) })
-      walletData.Amount=order.totalAmount
+      let now = new Date()
+      let date = moment(now).format('YYYYMMDD');
+      let orderDate = moment(order.Date).format('YYYYMMDD');
+      walletData.Amount = order.totalAmount
       walletData.userId = objectId(userId)
-      console.log(walletData);
-      console.log(order);
-      if (!order.status == 'Shipped'|| 'Delivered') {
+      console.log(date - orderDate);
+      let refund = parseInt(order.totalAmount + order?.fromWallet)
+      if (order.status != 'Shipped' && order.status != 'Delivered' && order.status != 'Cancelled' || !(date - orderDate) >= 7) {
         db.get()
           .collection(collection.ORDER_COLLECTION)
-          .deleteOne({ _id: objectId(details.orderId) })
-          .then(async(response) => {
-            let userWallet =await db.get() 
-            .collection(collection.WALLET_COLLECTION)
-            .findOne({userId:objectId(userId)})
+          .updateOne({ _id: objectId(details.orderId) }, { $set: { status: 'Cancelled' } })
+          .then(async (response) => {
+            let userWallet = await db.get()
+              .collection(collection.WALLET_COLLECTION)
+              .findOne({ userId: objectId(userId) })
             if (!userWallet) {
               console.log('No wallet');
               await db.get()
-            .collection(collection.WALLET_COLLECTION)
-            .insertOne(walletData)
-            }else{
-              // await db.get()
-              // .collection(collection.WALLET_COLLECTION)
-              // .findOne({userId:})
+                .collection(collection.WALLET_COLLECTION)
+                .insertOne(walletData)
+            } else {
+              await db.get()
+                .collection(collection.WALLET_COLLECTION)
+                .updateOne({ userId: objectId(userId) },
+                  {
+                    $inc: { Amount: refund }
+                  }
+                )
             }
             console.log(response);
             resolve({ canceled: true });
           });
+      } else if (order.status == 'Shipped') {
+        reject({ shipped: true })
+      } else if (order.status == 'Delivered') {
+        reject({ Delivered: true })
+      } else if (order.status == 'Cancelled') {
+        reject({ Cancelled: true })
       } else {
-        reject()
+        reject({ DateExed: true })
       }
     });
   },
@@ -818,55 +853,93 @@ module.exports = {
       let coupon = await db.get()
         .collection(collection.COUPON_COLLECTION)
         .findOne({ CouponCode: code.code })
-        console.log(coupon._id);
+      console.log(coupon?._id);
       if (coupon) {
         let checkUser = await db.get()
           .collection(collection.COUPON_COLLECTION)
-          .findOne( {
-            CouponCode:code.code,
+          .findOne({
+            CouponCode: code.code,
             users: {
               $elemMatch: {
                 user: objectId(userId)
               }
             }
           })
+        // !!!!!!!!!!!!!!!!!!!!!!! removed "!" for testing
         if (!checkUser) {
           console.log('\n Coupon ok \n');
           await db.get()
-          .collection(collection.COUPON_COLLECTION)
-          .updateOne(
-            { _id: objectId(coupon._id) },
-            {
-              $push:{users:{user:objectId(userId)}}
-            }
-          )
+            .collection(collection.COUPON_COLLECTION)
+            .updateOne(
+              { _id: objectId(coupon._id) },
+              {
+                $push: { users: { user: objectId(userId) } }
+              }
+            )
           resolve(coupon)
-        }else{
-          reject({used:true})
+        } else {
+          reject({ used: true })
         }
-      } 
-      reject({valid:false})
+      }
+      reject({ valid: false })
     })
   }),
 
-  removeCoupon:((code,userId)=>{
+  removeCoupon: ((code, userId) => {
     console.log('Hi remove');
-    return new Promise(async(resolve,reject)=>{
-      let lo =await db.get()
-      .collection(collection.COUPON_COLLECTION)
-      .findOne({CouponCode:code.couponCode})
-      let foo=await db.get()
-      .collection(collection.COUPON_COLLECTION)
-      .updateOne(
-        { _id: objectId(lo?._id)},
-        {
-          $pull: { users: { user: objectId(userId) } },
-        }
-      )
+    return new Promise(async (resolve, reject) => {
+      let lo = await db.get()
+        .collection(collection.COUPON_COLLECTION)
+        .findOne({ CouponCode: code.couponCode })
+      let foo = await db.get()
+        .collection(collection.COUPON_COLLECTION)
+        .updateOne(
+          { _id: objectId(lo?._id) },
+          {
+            $pull: { users: { user: objectId(userId) } },
+          }
+        )
       resolve()
     })
-  })
+  }),
 
-  
-
+  walletDtls: ((userId) => {
+    return new Promise(async (resolve, reject) => {
+      let wallet = await db.get()
+        .collection(collection.WALLET_COLLECTION)
+        .findOne({ userId: objectId(userId) })
+      if (wallet) {
+        resolve(wallet.Amount)
+      } reject()
+    })
+  }),
+  deductFromWallet: ((amount, userId) => {
+    return new Promise(async (resolve, reject) => {
+      await db.get()
+        .collection(collection.WALLET_COLLECTION)
+        .updateOne({ userId: objectId(userId) }, {
+          $inc: { Amount: -amount }
+        })
+      resolve()
+    })
+  }),
+  userReferral: (code, userId) => {
+    return new Promise(async (resolve, reject) => {
+      let check = await db.get()
+        .collection(collection.USER_COLLECTION)
+        .findOne({ _id: objectId(userId) })
+      if (check.Referral) {
+        reject(check.Referral)
+      } else {
+        let Referral = await db.get()
+          .collection(collection.USER_COLLECTION)
+          .updateOne({ _id: objectId(userId) },
+            {
+              $set: { Referral: code }
+            }
+          )
+        resolve({ status: true })
+      }
+    })
+  }
 };

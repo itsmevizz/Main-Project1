@@ -34,7 +34,7 @@ router.get("/", async function (req, res, next) {
   })
   if (req.session.user) {
     wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
-    cartCount = await userHelpers.getCartCount(req.session.user._id);
+    cartCount = await userHelpers.getCartCount(req.session.user?._id);
   }
   let category = await productHelper.getAllCategory();
   let bannerTop = await userHelpers.getTopBanner()
@@ -72,13 +72,19 @@ router.get("/user-login", (req, res) => {
   } else {
     loginErr = req.flash.loginErr;
     console.log("\n !@#!#!");
-    res.render("user/user-login", { login: true, loginErr });
+    res.render("user/user-login", { login: true, loginErr,success:req.flash.success });
     req.flash.loginErr = false;
+    req.flash.success = false;
   }
 });
 router.get("/user-signUp", (req, res) => {
-  res.render("user/user-signUp", { login: true, failed: req.flash.failed });
+  if (!req.session.user) {
+    let referral = req.query.referral
+  res.render("user/user-signUp", { login: true, failed: req.flash.failed, referral });
   req.flash.failed = false;
+  }else{
+    res.redirect("/");
+  }
 });
 
 router.post("/user-login", (req, res) => {
@@ -131,7 +137,7 @@ router.post("/user-signUp", (req, res) => {
     if (response) {
       req.flash.success =
         "Your account has been activated successfully. You can now login.";
-      res.render("user/user-login", { success: req.flash.success });
+      res.redirect("/user-login");
     } else {
       req.flash.failed = "Email Already Exists";
       res.redirect("/user-signUp");
@@ -182,6 +188,8 @@ router.post("/otp-resend", (req, res) => {
 });
 router.get("/logout", (req, res) => {
   req.session.user = null;
+  req.flash.Name =null
+  req.flash.Number =null
   res.redirect("/");
 });
 
@@ -245,28 +253,38 @@ router.get("/payment", verifyLogin, async (req, res) => {
   let couponcode = req.flash.couponcode
   let address = await userHelpers.getAddressDetails(req.session.user?._id);
   totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
+  let wallet = await userHelpers.walletDtls(req.session.user?._id).catch(() => { console.log('wallet= 0'); })
+  if (totalAmt > wallet) {
+    amountPayable = totalAmt - wallet
+  } else {
+    amountPayable = 0.00
+  }
   if (!totalAmt) {
     res.redirect('/')
   } else if (req.flash.discount) {
     let totalAmt = req.flash.discount
-    res.render("user/payment", { totalAmt, user: req.session.user, name, address, couponcode });
+    if (totalAmt > wallet) {
+      amountPayable = totalAmt - wallet
+    } else {
+      amountPayable = 0.00
+    }
+    res.render("user/payment", { totalAmt, user: req.session.user, name, address, couponcode, wallet, amountPayable });
   } else {
-    res.render("user/payment", { totalAmt, user: req.session.user, name, address });
+    res.render("user/payment", { totalAmt, user: req.session.user, name, address, wallet, amountPayable });
   }
 });
 
 router.post("/payment", verifyLogin, async (req, res) => {
   let products = await userHelpers.getCartProductList(req.session.user?._id);
   let address = await userHelpers.getUserAddressDetails(req.query.addressId, req.session.user?._id);
-  if (req.flash.discount) {
-    totalAmt = req.flash.discount
-    req.flash.totalAmt = req.flash.disconnect
-    totalPrice = totalAmt * 100
-  } else {
-    totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
-    req.flash.totalAmt = totalAmt
-  }
-  userHelpers.placeOrder(address, products, totalAmt, req.query.payment).then((orderId) => {
+  let actualAmnt = totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
+  let deductAmount = req.body.totalAmt - req.body.amount
+  userHelpers.deductFromWallet(deductAmount,req.session.user?._id)
+  totalAmt = parseInt(req.body.amount)
+  console.log(totalAmt);
+  req.flash.totalAmt = totalAmt
+  totalPrice = totalAmt * 100
+  userHelpers.placeOrder(address, products, totalAmt,actualAmnt,deductAmount, req.query.payment).then((orderId) => {
     req.flash.couponcode = ""
     req.flash.discount = false
     req.flash.orderId = orderId
@@ -381,7 +399,7 @@ router.post("/addNewAddress", async (req, res) => {
   userHelpers
     .placeOrderWithNewAddress(req.body, products, totalAmt)
     .then(() => {
-      res.render("user/Add-address", { totalAmt, user: req.session.user });
+      res.render("user/order-success", { user: req.session.user });
     });
 });
 
@@ -403,7 +421,8 @@ router.get("/user-profile", verifyLogin, async (req, res) => {
   var name = req.flash.Name;
   let address = await userHelpers.getAddressDetails(req.session.user?._id);
   let profile = await userHelpers.getProfile(req.session.user?._id);
-  res.render("user/user-profile", { profile, user, name, address, success, failed });
+  let wallet = await userHelpers.walletDtls(req.session.user?._id).catch(() => { console.log('wallet= 0'); })
+  res.render("user/user-profile", { profile, user, name, address, success, failed, wallet });
 });
 
 router.get("/edit-profileAddress", verifyLogin, async (req, res) => {
@@ -455,10 +474,18 @@ router.post("/cancel-order", (req, res) => {
   // console.log(req.body.orderId, 'jjkkklll');
   userHelpers.cancelOrder(req.body, req.session.user?._id).then((response) => {
     if (response) {
-      res.json(response);
+      res.json({status:true});
     }
-  }).catch(() => {
-    res.json({ status: true });
+  }).catch((response) => {
+    if(response.Shipped){
+      res.json({ Shipped: true });
+    }else if(response.Delivered){
+      res.json({ Delivered: true });
+    }else if(response.Cancelled){
+      res.json({ Cancelled: true });
+    }else{
+      res.json({ DateExed: true })
+    }
   })
 });
 
@@ -534,6 +561,20 @@ router.post('/remove-coupon', (req, res) => {
     res.json({ status: true })
     req.flash.couponcode = ""
     req.flash.discount = false
+  })
+})
+
+// Referral generator
+let referralCodeGenerator = require('referral-code-generator')
+router.post('/referral',(req,res)=>{
+  let name = req.flash.Name
+  let length = parseInt(name.length+8)
+  let referrall = 'referrall'
+  let code = referralCodeGenerator.custom('uppercase',length , 12, name+referrall)
+  userHelpers.userReferral(code, req.session.user?._id).then(()=>{
+    res.json(code)
+  }).catch((reff)=>{
+    res.json(reff)
   })
 })
 

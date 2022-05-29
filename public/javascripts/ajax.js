@@ -1,3 +1,4 @@
+
 function addToCart(proId) {
   $.ajax({
     url: "/add-to-cart/" + proId,
@@ -115,7 +116,7 @@ function selectPayment(payment) {
   PaymentMethod = payment;
 }
 
-function placeOrder() {
+function placeOrder(payableAmount, totalAmount) {
   if (!checkoutAddressId && PaymentMethod) {
     Swal.fire({
       icon: "error",
@@ -129,7 +130,7 @@ function placeOrder() {
       text: "Please Select payment method to Place Order",
     });
   }
-  if (!checkoutAddressId && !PaymentMethod) {
+  else if (!checkoutAddressId && !PaymentMethod) {
     Swal.fire({
       icon: "error",
       title: "Oops...",
@@ -139,6 +140,10 @@ function placeOrder() {
     console.log(PaymentMethod);
     $.ajax({
       url: `/payment?payment=${PaymentMethod}&addressId=${checkoutAddressId}`,
+      data:{
+        amount:payableAmount,
+        totalAmt:totalAmount,
+      },
       method: "post",
       success: (res) => {
         if (res.codSuccess) {
@@ -329,6 +334,7 @@ $("#changePassword-form").submit((e) => {
   }
 });
 
+
 function cancelOrder(orderId) {
   Swal.fire({
     title: "Are you sure?",
@@ -347,7 +353,7 @@ function cancelOrder(orderId) {
         },
         method: "post",
         success: (response) => {
-          if (!response.status) {
+          if (response.status) {
             Swal.fire(
               "Deleted!",
               "Your order has been canceled .",
@@ -357,13 +363,37 @@ function cancelOrder(orderId) {
                 location.reload();
               }
             });
-          }else{
+          }else if(response.Shipped){
             Swal.fire({
               position: "center",
               icon: "warning",
-              title: "Product is placed",
+              title: "Product is Shipped",
               showConfirmButton: false,
-              timer: 1000,
+              timer: 2000,
+            })
+          }else if(response.Delivered){
+            Swal.fire({
+              position: "center",
+              icon: "warning",
+              title: "Product is Delivered",
+              showConfirmButton: false,
+              timer: 2000,
+            })
+          }else if(response.Cancelled){
+            Swal.fire({
+              position: "center",
+              icon: "warning",
+              title: "Product is Cancelled",
+              showConfirmButton: false,
+              timer: 2000,
+            })
+          }else if(response.DateExed){
+            Swal.fire({
+              position: "center",
+              icon: "warning",
+              title: "Return Date is Exceed",
+              showConfirmButton: false,
+              timer: 2000,
             })
           }
         },
@@ -595,4 +625,15 @@ function deleteCoupon(iD){
       });
     }
   });
+}
+
+function referralGenerate(){
+  $.ajax({
+    url:"/referral",
+    method:'post',
+    success:(response)=>{
+      let referral =document.getElementById('copyText')
+      referral.value="http://localhost:3000/user-signUp?referral="+response
+    }
+  })
 }

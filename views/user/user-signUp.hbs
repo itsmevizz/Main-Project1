@@ -22,11 +22,15 @@
       <input type="text" name="Name" id="name" placeholder="Choose username" onkeyup="validateNamee()" />
       <label class="form-label mb-1 text-uppercase" style="font-family: Kokoro; font-size: 15px;">Password :</label>
       <span id="password-error" class="text-danger"></span>
-      <input type="password" name="Password" id="password" placeholder="Create password" onkeyup="validatePasswordd()" />
+      <input type="password" name="Password" id="password" placeholder="Create password"
+        onkeyup="validatePasswordd()" />
       <label class="form-label mb-1 text-uppercase" style="font-family: Kokoro; font-size: 15px;">Mobile Number:</label>
       <span id="number-error" class="text-danger"></span>
       <input type="text" name="Number" id="number" placeholder="Mobile number" maxlength="10"
         onkeyup="validateNumberr()" />
+      {{#if referral}}
+      <input type="text" value="{{referral}}" name="referral" hidden>
+      {{/if}}
       <button type="submit" class="btn signup mt-3" onclick="return validateFormm()" id="submit">create account</button>
       <span id="submit-error" class="text-danger ms-3"></span>
       {{#if failed}}
@@ -98,7 +102,7 @@
     return true;
   }
   function validateFormm() {
-    if (!validateNamee() || !validateEmaill() || !validatePasswordd() || !validateNumberr()) {
+    if (!validateNamee() || !validateEmaill() || !validatePasswordd() || !validateNumberr()|| !validateReferral()) {
 
       submitError.innerHTML = 'Please fill  and submit';
       setTimeout(function () { submitError.innerHTML = ''; }, 3000);
