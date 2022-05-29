@@ -71,18 +71,20 @@ router.get("/user-login", (req, res) => {
     res.redirect("/");
   } else {
     loginErr = req.flash.loginErr;
+    success = req.flash.success
     console.log("\n !@#!#!");
-    res.render("user/user-login", { login: true, loginErr,success:req.flash.success });
+    res.render("user/user-login", { login: true, loginErr, success });
     req.flash.loginErr = false;
     req.flash.success = false;
   }
 });
 router.get("/user-signUp", (req, res) => {
   if (!req.session.user) {
-    let referral = req.query.referral
-  res.render("user/user-signUp", { login: true, failed: req.flash.failed, referral });
-  req.flash.failed = false;
-  }else{
+    let referral = req.query?.referral
+    console.log(referral, "THis is this");
+    res.render("user/user-signUp", { login: true, failed: req.flash.failed, referral });
+    req.flash.failed = false;
+  } else {
     res.redirect("/");
   }
 });
@@ -135,8 +137,7 @@ router.post("/user-signUp", (req, res) => {
   req.flash.Number = req.body.Number;
   userHelpers.doSignup(req.body).then((response) => {
     if (response) {
-      req.flash.success =
-        "Your account has been activated successfully. You can now login.";
+      req.flash.success = "Your account has been activated successfully. You can now login.";
       res.redirect("/user-login");
     } else {
       req.flash.failed = "Email Already Exists";
@@ -188,8 +189,8 @@ router.post("/otp-resend", (req, res) => {
 });
 router.get("/logout", (req, res) => {
   req.session.user = null;
-  req.flash.Name =null
-  req.flash.Number =null
+  req.flash.Name = null
+  req.flash.Number = null
   res.redirect("/");
 });
 
@@ -279,12 +280,12 @@ router.post("/payment", verifyLogin, async (req, res) => {
   let address = await userHelpers.getUserAddressDetails(req.query.addressId, req.session.user?._id);
   let actualAmnt = totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
   let deductAmount = req.body.totalAmt - req.body.amount
-  userHelpers.deductFromWallet(deductAmount,req.session.user?._id)
+  userHelpers.deductFromWallet(deductAmount, req.session.user?._id)
   totalAmt = parseInt(req.body.amount)
   console.log(totalAmt);
   req.flash.totalAmt = totalAmt
   totalPrice = totalAmt * 100
-  userHelpers.placeOrder(address, products, totalAmt,actualAmnt,deductAmount, req.query.payment).then((orderId) => {
+  userHelpers.placeOrder(address, products, totalAmt, actualAmnt, deductAmount, req.query.payment).then((orderId) => {
     req.flash.couponcode = ""
     req.flash.discount = false
     req.flash.orderId = orderId
@@ -474,16 +475,16 @@ router.post("/cancel-order", (req, res) => {
   // console.log(req.body.orderId, 'jjkkklll');
   userHelpers.cancelOrder(req.body, req.session.user?._id).then((response) => {
     if (response) {
-      res.json({status:true});
+      res.json({ status: true });
     }
   }).catch((response) => {
-    if(response.Shipped){
+    if (response.Shipped) {
       res.json({ Shipped: true });
-    }else if(response.Delivered){
+    } else if (response.Delivered) {
       res.json({ Delivered: true });
-    }else if(response.Cancelled){
+    } else if (response.Cancelled) {
       res.json({ Cancelled: true });
-    }else{
+    } else {
       res.json({ DateExed: true })
     }
   })
@@ -566,14 +567,14 @@ router.post('/remove-coupon', (req, res) => {
 
 // Referral generator
 let referralCodeGenerator = require('referral-code-generator')
-router.post('/referral',(req,res)=>{
+router.post('/referral', (req, res) => {
   let name = req.flash.Name
-  let length = parseInt(name.length+8)
+  let length = parseInt(name.length + 8)
   let referrall = 'referrall'
-  let code = referralCodeGenerator.custom('uppercase',length , 12, name+referrall)
-  userHelpers.userReferral(code, req.session.user?._id).then(()=>{
+  let code = referralCodeGenerator.custom('uppercase', length, 12, name + referrall)
+  userHelpers.userReferral(code, req.session.user?._id).then(() => {
     res.json(code)
-  }).catch((reff)=>{
+  }).catch((reff) => {
     res.json(reff)
   })
 })

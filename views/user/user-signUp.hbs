@@ -29,7 +29,7 @@
       <input type="text" name="Number" id="number" placeholder="Mobile number" maxlength="10"
         onkeyup="validateNumberr()" />
       {{#if referral}}
-      <input type="text" value="{{referral}}" name="referral" hidden>
+      <input type="text" value="{{referral}}" name="referral" >
       {{/if}}
       <button type="submit" class="btn signup mt-3" onclick="return validateFormm()" id="submit">create account</button>
       <span id="submit-error" class="text-danger ms-3"></span>

@@ -11,7 +11,7 @@ const { rejects } = require("assert");
 const moment = require('moment');
 const { use } = require("../routes/admin");
 module.exports = {
-  doSignup: (userData) => {
+  doSignup:(userData) => {
     return new Promise(async (resolve, reject) => {
       let response = {};
       let wallet = {}
@@ -35,6 +35,7 @@ module.exports = {
               let validateReferral = await db.get()
                 .collection(collection.USER_COLLECTION)
                 .findOne({ Referral: userData.referral })
+                console.log(validateReferral,'This is the user\n');
               if (validateReferral) {
                 await db.get()
                   .collection(collection.WALLET_COLLECTION)

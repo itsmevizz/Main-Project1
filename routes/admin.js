@@ -374,6 +374,16 @@ router.post('/remove-coupon', async (req, res) => {
   })
 })
 
+router.get('/category-offers',async(req,res)=>{
+  let category = await productHelper.getAllCategory()
+  res.render('admin/category-offer',{admin:true, category})
+})
 
+
+router.post('/add-category-offer',(req,res)=>{
+  adminHelpers.addCategoryOffer(req.body).then((req,res)=>{
+
+  })
+})
 
 module.exports = router;
