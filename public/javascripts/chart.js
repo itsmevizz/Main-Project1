@@ -161,6 +161,12 @@ function dashboard() {
       document.querySelector("#transactions").innerHTML = chartDatas.transaction;
        //  Payments
        document.querySelector("#payments").innerHTML = chartDatas.payments;
+      //  statsticsSales
+      document.querySelector("#statsticsSales").innerHTML = chartDatas.grow[0];
+      // Total wallet
+      document.querySelector('#wallet').innerHTML = chartDatas.wallet
+      // Total users
+      document.querySelector('#totalUsers').innerHTML = chartDatas.users
 
       const growthChartEl = document.querySelector("#growthChart"),
         growthChartOptions = {
@@ -311,11 +317,49 @@ function dashboard() {
         );
         profileReportChart.render();
       }
-
       // Order Statistics Chart
       // --------------------------------------------------------------------
+
+      const ctx8 = document.getElementById("orderStatisticsChart5").getContext("2d");
+      const orderStatisticsChart5 = new Chart(ctx8, {
+        type: "bar",
+        data: {
+          labels: chartDatas.year,
+          datasets: [
+            {
+              label: "Yearly Sales Report",
+              data: chartDatas.yearlyAmount,
+              backgroundColor: [
+                "rgba(255, 30, 100, 1)",
+                "rgba(54, 100, 235, 1)",
+                "rgba(255, 106, 86, 1)",
+                "rgba(0, 192, 192, 1)",
+                "rgba(153, 40, 255, 1)",
+                "rgba(255, 159, 64, 1)",
+              ],
+              borderColor: [
+                "rgba(40, 100, 255, 1)",
+                "rgba(255, 99, 132, 1)",
+                "rgba(255, 206, 86, 1)",
+                "rgba(75, 192, 192, 1)",
+                "rgba(153, 102, 255, 1)",
+                "rgba(255, 159, 64, 1)",
+              ],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+
       const chartOrderStatistics = document.querySelector(
-        "#orderStatisticsChart"
+        "#"
       ),
         orderChartConfig = {
           chart: {

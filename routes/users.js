@@ -59,10 +59,12 @@ router.get("/product-view", async (req, res) => {
   id = req.query.id;
   totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
   cartCount = await userHelpers.getCartCount(req.session.user?._id);
+  wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
+  let name = req.flash.Name
   userHelpers.productView(id).then((product) => {
     var products = product;
     console.log(products);
-    res.render("user/product-view", { products, user, cartCount, totalAmt });
+    res.render("user/product-view", { products, user, cartCount, totalAmt, name, wishlistCount });
   });
 });
 
@@ -135,7 +137,9 @@ router.post("/user-login", (req, res) => {
 
 router.post("/user-signUp", (req, res) => {
   req.flash.Number = req.body.Number;
-  userHelpers.doSignup(req.body).then((response) => {
+  let referral = req.body.referral
+  req.body.referral = null
+  userHelpers.doSignup(req.body, referral).then((response) => {
     if (response) {
       req.flash.success = "Your account has been activated successfully. You can now login.";
       res.redirect("/user-login");
@@ -213,18 +217,24 @@ router.get("/cart", async (req, res) => {
   var name = req.flash.Name;
   totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
   cartCount = await userHelpers.getCartCount(req.session.user?._id);
+  wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
+  let wallet = await userHelpers.walletDtls(req.session.user?._id).catch(() => { console.log('wallet= 0'); })
+  if (totalAmt > wallet) {
+    amountPayable = totalAmt - wallet
+  } else {
+    amountPayable = 0.00
+  }
   userHelpers.getCartProducts(req.session.user?._id).then((products) => {
-    res.render("user/cart", { products, user, cartCount, totalAmt, name });
-  });
-  userHelpers.getCartProducts(req.session.user?._id).then((products) => {
-    res.render("user/cart", { products, user, cartCount, name });
+    res.render("user/cart", { products, user, wishlistCount, cartCount, totalAmt, wallet, amountPayable, name });
   });
 });
 
 router.get("/add-to-cart/:id", async (req, res) => {
   if (req.session.user) {
     count = await userHelpers.getCartCount(req.session.user?._id);
-    userHelpers.addToCart(req.params.id, req.session.user._id).then(() => {
+    product = await userHelpers.productView(req.params?.id)
+    console.log(product);
+    userHelpers.addToCart(req.params.id, req.session.user._id, product).then(() => {
       res.json({ status: true, count });
       console.log(count + "/*/*/*/");
     });
@@ -237,8 +247,13 @@ router.post("/change-product-quantity", (req, res, next) => {
   console.log("1 Hi quantity");
   userHelpers.changePdoductQuantity(req.body).then(async (response) => {
     let totalAmt = await userHelpers.getTotalAmount(req.body.user);
-    res.json({ status: true, totalAmt });
-    console.log(req.body);
+    let wallet = await userHelpers.walletDtls(req.session.user?._id).catch(() => { console.log('wallet= 0'); })
+    if (totalAmt > wallet) {
+      amountPayable = totalAmt - wallet
+    } else {
+      amountPayable = 0.00
+    }
+    res.json({ status: true, totalAmt,amountPayable });
   });
 });
 
@@ -277,67 +292,71 @@ router.get("/payment", verifyLogin, async (req, res) => {
 
 router.post("/payment", verifyLogin, async (req, res) => {
   let products = await userHelpers.getCartProductList(req.session.user?._id);
-  let address = await userHelpers.getUserAddressDetails(req.query.addressId, req.session.user?._id);
-  let actualAmnt = totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
-  let deductAmount = req.body.totalAmt - req.body.amount
-  userHelpers.deductFromWallet(deductAmount, req.session.user?._id)
-  totalAmt = parseInt(req.body.amount)
-  console.log(totalAmt);
-  req.flash.totalAmt = totalAmt
-  totalPrice = totalAmt * 100
-  userHelpers.placeOrder(address, products, totalAmt, actualAmnt, deductAmount, req.query.payment).then((orderId) => {
-    req.flash.couponcode = ""
-    req.flash.discount = false
-    req.flash.orderId = orderId
-    if (req.query.payment === "COD") {
-      res.json({ codSuccess: true });
-    } else if (req.query.payment === 'ONLINE') {
-      userHelpers.generateRazorpay(orderId, totalPrice).then((response) => {
-        console.log('\n line 232');
-        response.user = req.session?.user
-        response.razorpaySuccess = true
+  if (products) {
+    let address = await userHelpers.getUserAddressDetails(req.query.addressId, req.session.user?._id);
+    let actualAmnt = totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
+    let deductAmount = req.body.totalAmt - req.body.amount
+    userHelpers.deductFromWallet(deductAmount, req.session.user?._id)
+    totalAmt = parseInt(req.body.amount)
+    console.log(totalAmt);
+    req.flash.totalAmt = totalAmt
+    totalPrice = totalAmt * 100
+    userHelpers.placeOrder(address, products, totalAmt, actualAmnt, deductAmount, req.query.payment).then((orderId) => {
+      req.flash.couponcode = ""
+      req.flash.discount = false
+      req.flash.orderId = orderId
+      if (req.query.payment === "COD") {
+        res.json({ codSuccess: true });
+      } else if (req.query.payment === 'ONLINE') {
+        userHelpers.generateRazorpay(orderId, totalPrice).then((response) => {
+          console.log('\n line 232');
+          response.user = req.session?.user
+          response.razorpaySuccess = true
 
-        console.log(response);
-        res.json({ response })
-      })
-    } else {
-      console.log('Paypal', req.query.payment);
-      var create_payment_json = {
-        "intent": "sale",
-        "payer": {
-          "payment_method": "paypal"
-        },
-        "redirect_urls": {
-          "return_url": "http://localhost:3000/success",
-          "cancel_url": "http://localhost:3000/payment"
-        },
-        "transactions": [{
-          "item_list": {
-            "items": [{
-              "name": "item",
-              "sku": "001",
-              "price": totalAmt,
+          console.log(response);
+          res.json({ response })
+        })
+      } else {
+        console.log('Paypal', req.query.payment);
+        var create_payment_json = {
+          "intent": "sale",
+          "payer": {
+            "payment_method": "paypal"
+          },
+          "redirect_urls": {
+            "return_url": "http://localhost:3000/success",
+            "cancel_url": "http://localhost:3000/payment"
+          },
+          "transactions": [{
+            "item_list": {
+              "items": [{
+                "name": "item",
+                "sku": "001",
+                "price": totalAmt,
+                "currency": "USD",
+                "quantity": 1
+              }]
+            },
+            "amount": {
               "currency": "USD",
-              "quantity": 1
-            }]
-          },
-          "amount": {
-            "currency": "USD",
-            "total": totalAmt
-          },
-          "description": "This is the payment description."
-        }]
-      };
-      paypal.payment.create(create_payment_json, function (error, payment) {
-        if (error) {
-          throw error;
-        } else {
-          payment.razorpaySuccess = false
-          res.json(payment)
-        }
-      });
-    }
-  });
+              "total": totalAmt
+            },
+            "description": "This is the payment description."
+          }]
+        };
+        paypal.payment.create(create_payment_json, function (error, payment) {
+          if (error) {
+            throw error;
+          } else {
+            payment.razorpaySuccess = false
+            res.json(payment)
+          }
+        });
+      }
+    });
+  } else {
+    res.json({ falspayment: true })
+  }
 });
 
 // Paypal Success
@@ -576,6 +595,15 @@ router.post('/referral', (req, res) => {
     res.json(code)
   }).catch((reff) => {
     res.json(reff)
+  })
+})
+
+// remove form wishlist
+
+router.post('/remove-wishlist', async (req, res) => {
+  userHelpers.removeFromWishlist(req.body, req.session.user?._id).then((response) => {
+    res.json(response)
+
   })
 })
 

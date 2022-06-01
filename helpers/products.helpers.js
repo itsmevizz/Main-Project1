@@ -378,4 +378,15 @@ module.exports = {
       resolve(pay);
     });
   },
+
+  getCategoryOfferrr: () => {
+    return new Promise(async (resolve, reject) => {
+      let products = await db
+        .get()
+        .collection(collection.CATEGORY_COLLECTION)
+        .find({},{_id:1,Offer:1})
+        .toArray();
+      resolve(products);
+    });
+  },
 };

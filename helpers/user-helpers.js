@@ -11,7 +11,7 @@ const { rejects } = require("assert");
 const moment = require('moment');
 const { use } = require("../routes/admin");
 module.exports = {
-  doSignup:(userData) => {
+  doSignup:(userData,referral) => {
     return new Promise(async (resolve, reject) => {
       let response = {};
       let wallet = {}
@@ -34,8 +34,7 @@ module.exports = {
                 .insertOne(wallet)
               let validateReferral = await db.get()
                 .collection(collection.USER_COLLECTION)
-                .findOne({ Referral: userData.referral })
-                console.log(validateReferral,'This is the user\n');
+                .findOne({ Referral: referral })
               if (validateReferral) {
                 await db.get()
                   .collection(collection.WALLET_COLLECTION)
@@ -47,6 +46,8 @@ module.exports = {
                   .updateOne({ userId: objectId(data.insertedId) }, {
                     $inc: { Amount: 50 }
                   })
+              }else{
+                console.log('Wrong referral');
               }
               response.user = userData.Name;
               resolve(response);
@@ -207,10 +208,15 @@ module.exports = {
       resolve(cartItems);
     });
   },
-  addToCart: (proId, userId) => {
+  addToCart: (proId, userId,product) => {
     let proObj = {
       item: objectId(proId),
       quantity: 1,
+      productName: product.Name,
+      actualPrice: product.Price,
+      DiscountPrice:product.Offers.DiscountPrice,
+      Discount:product.Offers.Discount,
+      productImage: product.img,
     };
     return new Promise(async (resolve, reject) => {
       let userCart = await db
@@ -338,12 +344,12 @@ module.exports = {
               item: 1,
               quantity: 1,
               product: { $arrayElemAt: ["$product", 0] },
-            },
+            }, 
           },
           {
             $group: {
               _id: null,
-              total: { $sum: { $multiply: ["$quantity", "$product.Price"] } },
+              total: { $sum: { $multiply: ["$quantity", "$product.Offers.DiscountPrice"] } },
             },
           },
         ])
@@ -586,6 +592,7 @@ module.exports = {
           .collection(collection.ORDER_COLLECTION)
           .updateOne({ _id: objectId(details.orderId) }, { $set: { status: 'Cancelled' } })
           .then(async (response) => {
+            if(order.status !="Pending"){
             let userWallet = await db.get()
               .collection(collection.WALLET_COLLECTION)
               .findOne({ userId: objectId(userId) })
@@ -603,8 +610,10 @@ module.exports = {
                   }
                 )
             }
-            console.log(response);
             resolve({ canceled: true });
+          }else{
+            resolve({ canceled: true });
+          }
           });
       } else if (order.status == 'Shipped') {
         reject({ shipped: true })
@@ -807,26 +816,32 @@ module.exports = {
           {
             $project: {
               totalAmount: '$totalAmount',
+              fromWallet:'$fromWallet',
+              actualAmount:'$actualAmount',
               item: "$products.item",
               quantity: "$products.quantity",
+              Name:"$products.productName",
+              img:"$products.productImage",
+              actualPrice:"$products.actualPrice",
+              DiscountPrice:"$products.DiscountPrice",
             },
           },
-          {
-            $lookup: {
-              from: collection.PRODUCT_COLLECTION,
-              localField: "item",
-              foreignField: "_id",
-              as: "product",
-            },
-          },
-          {
-            $project: {
-              totalAmount: 1,
-              item: 1,
-              quantity: 1,
-              product: { $arrayElemAt: ["$product", 0] },
-            },
-          },
+          // {
+          //   $lookup: {
+          //     from: collection.PRODUCT_COLLECTION,
+          //     localField: "item",
+          //     foreignField: "_id",
+          //     as: "product",
+          //   },
+          // },
+          // {
+          //   $project: {
+          //     totalAmount: 1,
+          //     item: 1,
+          //     quantity: 1,
+          //     product: { $arrayElemAt: ["$product", 0] },
+          //   },
+          // },
         ])
         .toArray();
       if (!orderDetails.length == 0) {
@@ -942,5 +957,25 @@ module.exports = {
         resolve({ status: true })
       }
     })
-  }
+  },
+
+  removeFromWishlist:(proId,userId)=>{
+    console.log(proId);
+    console.log(userId);
+    return new Promise(async(resolve,reject)=>{
+      await db.get().collection(collection.WISHLIST_COLLECTION)
+      .updateOne(
+        {user: objectId(userId)},
+        {
+          $pull: { products: { item: objectId(proId.product) } },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        resolve({ removeProduct: true });
+      });
+      
+    })
+  },
+
 };

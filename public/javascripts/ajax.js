@@ -17,29 +17,36 @@ function addToCart(proId) {
 
 function changeQuantity(cartId, ProId, userId, count) {
   let quantity = parseInt(document.getElementById(ProId).innerHTML);
-  $.ajax({
-    url: "/change-product-quantity",
-    data: {
-      user: userId,
-      cart: cartId,
-      product: ProId,
-      count: count,
-    },
-    method: "post",
-    success: (response) => {
-      if (response) {
-        // if(quantity+count <= 1){
-        //   $('#lesss').hide()
-        // }else{
-        //   $('#lesss').show()
+  if (quantity+count==0) {
+    removeItem(cartId,ProId)
+  }else{
+
+    console.log(quantity);
+    $.ajax({
+      url: "/change-product-quantity",
+      data: {
+        user: userId,
+        cart: cartId,
+        product: ProId,
+        count: count,
+      },
+      method: "post",
+      success: (response) => {
+        // if (response) {
+        //   if(quantity+count <= 1){
+        //     $(ProId1).hide()
+        //   }else{
+        //     $(ProId1).show()
+        //   }
+          document.getElementById(ProId).innerHTML = quantity + count;
+          document.getElementById("totalAmt").innerHTML = response.totalAmt;
+          document.getElementById("totalAll").innerHTML = response.amountPayable;
         // }
-        document.getElementById(ProId).innerHTML = quantity + count;
-        document.getElementById("totalAmt").innerHTML = response.totalAmt;
-        document.getElementById("totalAll").innerHTML = response.totalAmt;
-      }
-    },
-  });
+      },
+    });
+  }
 }
+
 function removeItem(cartId, ProId) {
   Swal.fire({
     title: "Are you sure?",
@@ -148,7 +155,15 @@ function placeOrder(payableAmount, totalAmount) {
       success: (res) => {
         if (res.codSuccess) {
           location.href = '/order-placed'
-        } else if (PaymentMethod === 'ONLINE') {
+        } else if(res.falspayment){
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong! Your order is pending',
+            footer: ''
+          })
+        }
+        else if (PaymentMethod === 'ONLINE') {
           console.log('Razo');
           razorpayPayment(res);
         } else {
@@ -636,4 +651,66 @@ function referralGenerate(){
       referral.value="http://localhost:3000/user-signUp?referral="+response
     }
   })
+}
+
+function deleteCategoryOffer(iD,nme){
+  Swal.fire({
+    title: "Are you sure?",
+    text: "",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/admin/remove-cateOffer",
+        data: {
+          id:iD,
+          name:nme
+        },
+        method: "post",
+        success: (response) => {
+          location.reload()
+        },
+      });
+    }
+  });
+}
+
+
+function removeFromWishList(ProId) {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/remove-wishlist",
+        data: {
+          product: ProId,
+        },
+        method: "post",
+        success: (response) => {
+          if (response.removeProduct) {
+            Swal.fire(
+              "Deleted!",
+              "Your product has been deleted.",
+              "success"
+            ).then((result) => {
+              if (result.isConfirmed) {
+                location.reload();
+              }
+            });
+          }
+        },
+      });
+    }
+  });
 }

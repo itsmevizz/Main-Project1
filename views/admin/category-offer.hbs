@@ -155,12 +155,12 @@
           </a>
 
           <ul class="menu-sub">
-            <li class="menu-item active">
+            <li class="menu-item ">
               <a href="/admin/coupons" class="menu-link">
                 <div data-i18n="Without menu">Coupons</div>
               </a>
             </li>
-            <li class="menu-item ">
+            <li class="menu-item active">
               <a href="/admin/category-offers" class="menu-link">
                 <div data-i18n="Without navbar">Category offers</div>
               </a>
@@ -245,7 +245,7 @@
                 <p class="text-danger">{{failed}}</p>
                 {{else}}
                 {{#if success}}
-                <p class="text-success">{{success}}</p>
+                <p class="text-success">Added</p>
                 {{/if}}
                 {{/if}}
                 <button type="submit" class="btn btn-success mt-2">Submit</button>
@@ -264,17 +264,19 @@
                 <thead>
                   <tr>
                     <th>No.</th>
+                    <th>Name</th>
                     <th>Percentage</th>
                     <th>Exp</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
-                {{#each coupons}}
+                {{#each category}}
                 <tbody class="table-border-bottom-0">
                   <tr>
                     <td>{{inc @index}}</td>
-                    <td> {{this.Percentage}}</td>
-                    <td>{{this.ExpirationDate}}</td>
+                    <td>{{this.Name}}</td>
+                    <td> {{this.Offer.Discount}}</td>
+                    <td>{{this.Offer.ExpirationDate}}</td>
                     <td>
                       <div>
                         {{!-- <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
@@ -282,7 +284,7 @@
                           <span class="badge bg-label-success me-1">Edit</span>
                         </button> --}}
                         <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                          onclick="deleteCoupon('{{this._id}}')">
+                          onclick="deleteCategoryOffer('{{this._id}}','{{this.Name}}')">
                           <span class="badge bg-label-danger me-1">Delete</span>
                         </button>
                       </div>

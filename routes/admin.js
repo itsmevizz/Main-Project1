@@ -11,6 +11,7 @@ const { getAllProducts } = require("../helpers/products.helpers");
 const async = require("hbs/lib/async");
 const { trusted } = require("mongoose");
 const adminHelpers = require('../helpers/admin-helpers')
+const pdf = require('../public/javascripts/pdf')
 /* GET users listing. */
 router.get("/", function (req, res, next) {
   if (req.session.admin) {
@@ -225,7 +226,10 @@ router.get('/getChartData', async (req, res) => {
   let pay = await productHelper.getPaymentMethodAmount()
   let forgrowth = await productHelper.getMonthlySalesForGrowth()
   let fordash = await productHelper.getYearlySalesForDashBoard()
-
+  let walletTotal = await adminHelpers.getTotalWallet()
+  let orderStatistics = await adminHelpers.getOrderStatus()
+  let totalOrders = await adminHelpers.getTotalOrders()
+  let totalUsers = await adminHelpers.getAllUsers()
 
   // map to get only the total amount
   let dailyAmt = [];
@@ -285,7 +289,35 @@ router.get('/getChartData', async (req, res) => {
     pro.push(tran.totalAmount);
   });
 
-
+  // map to get orderStatistics count
+  let Statistics = []
+  orderStatistics.map((sta) => {
+    Statistics.push(sta.count)
+  })
+  // map to get orderStatistics label
+  let statLabls = []
+  orderStatistics.map((lab) => {
+    statLabls.push(lab._id)
+  })
+  let statisticsLable = []
+  statLabls.map((sss) => {
+    statisticsLable.push()
+  })
+  // Total orders
+  let ttlOrders = []
+  totalOrders.map((ttl) => {
+    ttlOrders.push(ttl.count)
+  })
+  // Total wallet
+  let wallet = []
+  walletTotal.map((wlt) => {
+    wallet.push(wlt.Total)
+  })
+  // Total users
+  let users = []
+  totalUsers.map((usrs) => {
+    users.push(usrs.count)
+  })
   let growth = Math.round(grow[0] / grow[1])
 
   let sales = Math.round(sale[0] / sale[1])
@@ -298,7 +330,7 @@ router.get('/getChartData', async (req, res) => {
 
   // console.log(dailySales,'daily');
 
-  res.json({ dailyAmt, date, monthlyAmount, month, yearlyAmount, grow, year, growth, sales, profit, transaction, payments })
+  res.json({ dailyAmt, date, monthlyAmount, month, yearlyAmount, grow, year, growth, sales, profit, transaction, payments, wallet, statisticsLable, Statistics, ttlOrders, users })
 
 })
 
@@ -349,7 +381,7 @@ router.post('/desable-banner', (req, res) => {
 
 router.get('/coupons', async (req, res) => {
   let coupons = await adminHelpers.getAllCoupons().then((coupons) => {
-    res.render('admin/coupon', { admin: true, coupons,failed:req.flash.failed })
+    res.render('admin/coupon', { admin: true, coupons, failed: req.flash.failed })
     req.flash.failed = false
 
   })
@@ -369,21 +401,40 @@ router.post('/add-coupon', (req, res) => {
 router.post('/remove-coupon', async (req, res) => {
   console.log(req.body);
   await adminHelpers.removeCoupon(req.body).then(() => {
-    console.log('/*/*/*/*');
     res.json({ satus: true })
   })
 })
 
-router.get('/category-offers',async(req,res)=>{
-  let category = await productHelper.getAllCategory()
-  res.render('admin/category-offer',{admin:true, category})
+router.get('/category-offers', async (req, res) => {
+  let category = await productHelper.getCategoryOfferrr()
+  res.render('admin/category-offer', { admin: true, category,success:req.flash.success })
+  req.flash.success = null
 })
 
-
-router.post('/add-category-offer',(req,res)=>{
-  adminHelpers.addCategoryOffer(req.body).then((req,res)=>{
-
+router.post("/remove-cateOffer",async (req,res)=>{
+  console.log('hi cat');
+  await adminHelpers.removeCateOffer(req.body).then(() => {
+    res.json({status:true})
   })
 })
+
+
+router.post('/add-category-offer', (req, res) => {
+  adminHelpers.addCategoryOffer(req.body).then(() => {
+    req.flash.success = 'Ok'
+    res.redirect('/admin/category-offers')
+  })
+})
+router.get('/order-dtls',async(req,res)=>{
+  await adminHelpers.getOrderDetails(req.query).then((details)=>{
+    console.log(details);
+    res.render('admin/view-orderDtls',{details, admin:true})
+
+  }).catch((e)=>{
+    console.log('Hi')
+  })
+})
+
+
 
 module.exports = router;

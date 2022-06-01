@@ -49,7 +49,7 @@
                                                 </div>
                                                 <div class="col">
                                                     <div>
-                                                        <input type="button" value="-" id="lesss"
+                                                        <input type="button" value="-" id="{{this.product._id1}}"
                                                             class="button-minus border rounded-circle  icon-shape icon-sm"
                                                             data-field="quantity" style="width: 2rem; height: 2rem;"
                                                             onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../user._id}}',-1)">
@@ -62,7 +62,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col"><span>&#8377;</span> <span
-                                                        id="subTtl">{{totalAmt}}{{this.product.Price}}</span>
+                                                        id="subTtl">{{totalAmt}}{{this.product.Offers.DiscountPrice}}</span>
                                                     <button type="submit" class="close" data-dismiss="alert"
                                                         aria-label="Close">
                                                         <span aria-hidden="true"
@@ -98,6 +98,15 @@
                                             <span class="value" id="totalAmt">{{totalAmt}}</span>
                                             <span class="value">&#8377;</span>
                                         </div>
+                                        <div class="cart-summary-line" id="cart-subtotal-products">
+
+                                            <span class="label js-subtotal">
+                                                From Wallet
+                                            </span>
+
+                                            <span class="value" id="totalAmt">{{wallet}}</span>
+                                            <span class="value">&#8377;</span>
+                                        </div>
                                         <div class="cart-summary-line" id="cart-subtotal-shipping">
                                             <span class="label">
                                                 Shipping
@@ -114,7 +123,7 @@
                                     <div class="card-block">
                                         <div class="cart-summary-line cart-total">
                                             <span class="label">Total (tax excl.)</span>
-                                            <span class="value" id="totalAll">{{totalAmt}}</span>
+                                            <span class="value" id="totalAll">{{amountPayable}}</span>
                                             <span class="value">&#8377;</span>
                                         </div>
 

@@ -3,8 +3,8 @@
     <div class="col">
         <h4><b>Orders</b></h4>
     </div>
-    <a class="label" href="/">
-        <i class="material-icons">chevron_left</i>Continue shopping
+    <a class="label" href="/order-list">
+        <i class="material-icons">chevron_left</i>Back
     </a>
 </div>
 <div id="wrapper">
@@ -15,6 +15,9 @@
                 <section id="main">
                     <div class=" row">
                         <!-- Left Block: cart product informations & shpping -->
+                        <div class="">
+                            <h1 style="font-family: monospace;">Product details</h1>
+                        </div>
                         <div class=" col-md-6 col-xs-12 col-lg-8 overflow-auto mb-4 scrollbar scrollbar-rare-wind">
 
                             <!-- cart products detailed -->
@@ -26,11 +29,11 @@
                                         <div class="row border-top border-bottom">
                                             <div class="row main align-items-center">
                                                 <div class="col-2"><img class="img-fluid mt-2 mb-2"
-                                                        src="/images/{{this.product.img.[0]}}" style="height: 100px;">
+                                                        src="/images/{{this.img.[0]}}" style="height: 100px;">
                                                 </div>
                                                 <div class="col">
                                                     <div class="row text-muted"></div>
-                                                    <div class="row">{{this.product.Name}}</div>
+                                                    <div class="row">{{this.Name}}</div>
                                                 </div>
                                                 <div class="col">
                                                     <div>
@@ -40,7 +43,8 @@
                                                             onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../user._id}}',-1)">
                                                         --}}
                                                         <span type="number" id="{{this.product._id}}" name="quantity"
-                                                            class="qty quantity-field border-0 text-center w-25 m-1">quantity: {{this.quantity}}</span>
+                                                            class="qty quantity-field border-0 text-center w-25 m-1">quantity:
+                                                            {{this.quantity}}</span>
                                                         {{!-- <input type="button" value="+"
                                                             class="button-plus border rounded-circle icon-shape icon-sm "
                                                             data-field="quantity" style="width: 2rem; height: 2rem;"
@@ -49,7 +53,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col"><span>&#8377;</span> <span
-                                                        id="subTtl">{{this.product.Price}}</span>
+                                                        id="subTtl">{{this.DiscountPrice}}</span>
 
                                                 </div>
                                             </div>
@@ -71,6 +75,18 @@
                                     <hr class="separator">
 
                                     <div class="card-block">
+                                        <div class="cart-summary-line cart-total mb-1">
+                                            <span class="label">Total Amount(tax excl.)</span>
+                                            <span class="value" id="totalAll">{{orderDetails.[0].actualAmount}}</span>
+                                            <span class="value">&#8377;</span>
+                                        </div>
+                                        <div class="cart-summary-line cart-total">
+                                            <span class="label">From Wallet</span>
+                                            <span class="value" id="totalAll">{{orderDetails.[0].fromWallet}}</span>
+                                            <span class="value">&#8377;</span>
+                                        </div>
+
+                                        <hr class="separator mb-4 mt-1">
                                         <div class="cart-summary-line cart-total">
                                             <span class="label">Total Paid(tax excl.)</span>
                                             <span class="value" id="totalAll">{{orderDetails.[0].totalAmount}}</span>

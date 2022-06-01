@@ -643,7 +643,7 @@
                                                 </ul>
 
                                                 <ul class="product-flag">
-                                                    <li class="discount"><span>-5%</span></li>
+                                                    <li class="discount"><span>-{{this.Offer.Discount}}%</span></li>
                                                     <li class="new"><span>New</span></li>
                                                 </ul>
 
@@ -663,7 +663,7 @@
 
                                                 <div class="hook-reviews">
                                                     <div class="comments_note" itemprop="aggregateRating" itemscope
-                                                        itemtype="https://schema.org/AggregateRating">
+                                                      >
                                                         <div class="star_content clearfix">
                                                             <div class="star star_on"></div>
                                                             <div class="star star_on"></div>
@@ -685,17 +685,17 @@
 
 
                                                     <span class="sr-only">Regular price</span>
-                                                    <span class="regular-price">€35.90</span>
+                                                    <span class="regular-price">{{this.Price}}</span>
 
 
 
                                                     <span class="sr-only">Price</span>
                                                     <span itemprop="price"
-                                                        class="price price-sale">{{this.Price}}</span>
+                                                        class="price price-sale">{{this.Offers.DiscountPrice}}</span>
 
 
 
-                                                    <span class="discount-percentage discount-product">-5%</span>
+                                                    <span class="discount-percentage discount-product">-{{this.Offers.Discount}}%</span>
                                                 </div>
 
                                             </div>
