@@ -529,7 +529,7 @@ function desableBanner(id) {
 function addToWishList(proId) {
   $.ajax({
     url: "/add-to-wishlist/" + proId,
-    method: "get",
+    method: "post",
     success: (response) => {
       console.log(response);
       if (response.status === true) {
@@ -714,3 +714,71 @@ function removeFromWishList(ProId) {
     }
   });
 }
+
+function blockUser(userId, Name) {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, Block ",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/admin/Block-user",
+        data: {
+          id: userId,
+        },
+        method: "post",
+        success: (response) => {
+          if (response.blocked) {
+                location.reload();
+          }else{
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Somthing Wrong!',
+            })
+          }
+        },
+      });
+    }
+  });
+}
+
+
+function unblockUser(userId, Name) {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, Unblock ",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/admin/Unblock-user",
+        data: {
+          id: userId,
+        },
+        method: "post",
+        success: (response) => {
+          if (response.unblocked) {
+                location.reload();
+          }else{
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Somthing Wrong!',
+            })
+          }
+        },
+      });
+    }
+  });
+}
+

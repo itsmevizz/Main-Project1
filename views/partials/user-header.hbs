@@ -179,25 +179,22 @@
           <a href="/">
             {{!-- <img class="logo img-responsive" src="/Logo/Logo2.svg" alt="Sparkle in "
               style="width: 350px; height: 150px;"> --}}
-             
-              <span><h1 class="text-center"> <i class="fa-solid fa-bolt  fa-2xl" ></i>SPARKLE IN</h1></span>
+
+            <span>
+              <h1 class="text-center"> <i class="fa-solid fa-bolt  fa-2xl"></i>SPARKLE IN</h1>
+            </span>
           </a>
         </div>
         <div class=" col col-md-4 col-sm-12 position-static">
 
           <div id="_desktop_cart_block">
-            <div class="blockcart cart-preview"
-              
-              data-cartitems="0">
+            <div class="blockcart cart-preview d-flex align-items-center" data-cartitems="0">
               <div class="button_cart">
                 <a rel="nofollow" href="/cart" class="desktop hidden-md-down">
                   <span class="item_count" id="carrt-count">{{cartCount}}</span>
                   <span></span>
-                  {{#if user}}
-                  <span class="item_total">Hi {{name}}</span>
-                  {{else}}
-                  <span>Please Login</span>
-                  {{/if}}
+
+                  <span class="item_total"></span>
                 </a>
                 <a rel="nofollow" href="/cart" class="mobile hidden-lg-up">
                   <span class="item_count">0</span>
@@ -210,40 +207,6 @@
                 <div class="btn btn-warning rounded button_cart">
                   <a href="/user-login">Login</a>
                   {{/if}}
-                </div>
-                <div class="popup_cart">
-                  <div class="content-cart">
-                    <div class="mini_cart_arrow"></div>
-                    <ul>
-                    </ul>
-                    <div class="price_content">
-                      <div class="cart-subtotals">
-                        <div class="products price_inline">
-                          <span class="label">Subtotal</span>
-                          <span class="value">$0.00</span>
-                        </div>
-                        <div class=" price_inline">
-                          <span class="label"></span>
-                          <span class="value"></span>
-                        </div>
-                        <div class="shipping price_inline">
-                          <span class="label">Shipping</span>
-                          <span class="value">Free</span>
-                        </div>
-                        <div class="tax price_inline">
-                          <span class="label">Taxes</span>
-                          <span class="value">$0.00</span>
-                        </div>
-                      </div>
-                      <div class="cart-total price_inline">
-                        <span class="label">Total</span>
-                        <span class="value">$0.00</span>
-                      </div>
-                    </div>
-                    <div class="checkout">
-                      <a href="/cart" class="btn btn-primary">Checkout</a>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -282,22 +245,21 @@
               <div class="dropdown js-dropdown">
                 <span class="search-icon" data-toggle="dropdown"><i class="ion-ios-search-strong"></i></span>
                 <div id="pos_search_top" class="dropdown-menu">
-                  <form method="get" action="http://demo.posthemes.com/pos_ecolife_fashion/en/search" id="searchbox"
-                    class="form-inline form_search "
+                  <div id="searchbox" class="form-inline form_search "
                     data-search-controller-url="/pos_ecolife_fashion/modules/possearchproducts/SearchProducts.php">
                     <label for="pos_query_top">
                       <!-- image on background -->
                     </label>
-                    <input type="hidden" name="controller" value="search">
+                    <input type="hidden" name="controller" value="search" disabled>
                     <div class="pos_search form-group">
 
                     </div>
                     <input type="text" name="s" value="" placeholder="Enter your search key ... " id="pos_query_top"
-                      class="search_query form-control ac_input">
+                      class="search_query form-control ac_input" disabled>
                     <button type="submit" class="btn btn-default search_submit">
                       <i class="ion-ios-search-strong"></i>
                     </button>
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>
@@ -324,9 +286,9 @@
                 </a>
               </li>
 
-              <li class=" menu-item menu-item31  hasChild ">
+              <li class=" menu-item menu-item31  hasChild" hidden>
 
-                <a href="12-fashion.html">
+                <a href="">
 
                   <span>Fashion</span>
                   <i class="hidden-md-down ion-ios-arrow-down"></i> </a>
@@ -475,7 +437,7 @@
                 </div>
               </li>
 
-              <li class=" menu-item menu-item32  hasChild ">
+              <li class=" menu-item menu-item32  hasChild " hidden>
 
                 <a href="17-tops-sets.html">
 
@@ -494,7 +456,7 @@
                 </div>
               </li>
 
-              <li class=" menu-item menu-item33  hasChild ">
+              <li class=" menu-item menu-item33  hasChild " hidden>
 
                 <a href="18-accessories.html">
 
@@ -515,15 +477,16 @@
 
               <li class=" menu-item menu-item34   ">
 
-                <a href="">
-
+                <a data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="On progress" style="cursor: not-allowed;">
                   <span>About Us</span>
                 </a>
               </li>
 
               <li class=" menu-item menu-item35   ">
 
-                <a href="">
+                <a data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="On progress" style="cursor: not-allowed;">
 
                   <span>Contact us</span>
                 </a>

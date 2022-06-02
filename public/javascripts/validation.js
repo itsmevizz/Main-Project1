@@ -9,6 +9,7 @@
   let surNameError = document.getElementById('surname-error')
   let confirmPasswordError = document.getElementById('confirmpassword-error')
   let couponError = document.getElementById('coupon-error')
+  let descriptionError = document.getElementById('description')
 
   function validateName() {
     let name = document.getElementById('name').value;
@@ -153,4 +154,80 @@
       return false
     }return true
     
+  }
+
+  function validateProductName(){
+    const name = document.getElementById('name').value
+    if (name ==0) {
+      nameError.innerHTML='*'
+      return false
+    }
+    // else if(!name.match(/^[A-Za-z]{1,50}$/)){
+    //   nameError.innerHTML='*'
+    //   return false
+    // }
+      else if (name.length >=50) {
+        nameError.innerHTML='*'
+      return false
+    }else{
+      nameError.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>'
+      return true
+    }
+    
+  }
+
+  function validateDescription(){
+    const description = document.getElementById('Description').value
+    if (description ==0) {
+      descriptionError.innerHTML='*'
+      return false
+    }
+    // else if(!name.match(/^[A-Za-z]{1,50}$/)){
+    //   nameError.innerHTML='*'
+    //   return false
+    // }
+      else if (description.length >=100) {
+        descriptionError.innerHTML='*'
+      return false
+    }else{
+      descriptionError.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>'
+      return true
+    }
+    
+  }
+
+  function submit(){
+    if(!validateDescription() || !validateProductName()){
+      return false
+    }else{
+      return true
+    } 
+  }
+
+  function categoryName(){
+    const name = document.getElementById('name').value
+    if (name ==0) {
+      nameError.innerHTML='*'
+      return false
+    }
+    // else if(!name.match(/^[A-Za-z]{1,50}$/)){
+    //   nameError.innerHTML='*'
+    //   return false
+    // }
+      else if (name.length >=20) {
+        nameError.innerHTML='*'
+      return false
+    }else{
+      nameError.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>'
+      return true
+    }
+
+  }
+
+  function submit(){
+    if(!validateDescription() || !categoryName()){
+      return false
+    }else{
+      return true
+    } 
   }

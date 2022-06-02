@@ -199,13 +199,12 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/category", async (req, res) => {
-  var name = req.flash.Name;
   cartCount = 0
   wishlistCount = 0
   cartCount = await userHelpers.getCartCount(req.session.user?._id);
   wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
   userHelpers.getCategoru(req.query).then((products) => {
-    res.render("user/category", { products, name, cartCount, wishlistCount });
+    res.render("user/category", { products, cartCount, wishlistCount });
   }).catch(() => {
     console.log('No items');
     res.redirect('/')
@@ -214,7 +213,6 @@ router.get("/category", async (req, res) => {
 
 router.get("/cart", async (req, res) => {
   var user = req.session.user;
-  var name = req.flash.Name;
   totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
   cartCount = await userHelpers.getCartCount(req.session.user?._id);
   wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
@@ -225,7 +223,7 @@ router.get("/cart", async (req, res) => {
     amountPayable = 0.00
   }
   userHelpers.getCartProducts(req.session.user?._id).then((products) => {
-    res.render("user/cart", { products, user, wishlistCount, cartCount, totalAmt, wallet, amountPayable, name });
+    res.render("user/cart", { products, user, wishlistCount, cartCount, totalAmt, wallet, amountPayable });
   });
 });
 
@@ -253,7 +251,7 @@ router.post("/change-product-quantity", (req, res, next) => {
     } else {
       amountPayable = 0.00
     }
-    res.json({ status: true, totalAmt,amountPayable });
+    res.json({ status: true, totalAmt, amountPayable });
   });
 });
 
@@ -265,7 +263,6 @@ router.post("/remove-from-cart", (req, res) => {
 });
 
 router.get("/payment", verifyLogin, async (req, res) => {
-  var name = req.flash.Name;
   let couponcode = req.flash.couponcode
   let address = await userHelpers.getAddressDetails(req.session.user?._id);
   totalAmt = await userHelpers.getTotalAmount(req.session.user?._id);
@@ -284,9 +281,9 @@ router.get("/payment", verifyLogin, async (req, res) => {
     } else {
       amountPayable = 0.00
     }
-    res.render("user/payment", { totalAmt, user: req.session.user, name, address, couponcode, wallet, amountPayable });
+    res.render("user/payment", { totalAmt, user: req.session.user, address, couponcode, wallet, amountPayable });
   } else {
-    res.render("user/payment", { totalAmt, user: req.session.user, name, address, wallet, amountPayable });
+    res.render("user/payment", { totalAmt, user: req.session.user, address, wallet, amountPayable });
   }
 });
 
@@ -404,8 +401,24 @@ router.post('/verify-payment', (req, res) => {
 
 // Order success hbs
 
-router.get('/order-placed', (req, res) => {
-  res.render('user/order-success')
+router.get('/order-placed',verifyLogin, async (req, res) => {
+  // res.render('user/order-success')
+  orderId = req.flash.orderId
+  if (orderId) {
+    cartCount = 0
+    wishlistCount = 0
+    cartCount = await userHelpers.getCartCount(req.session.user?._id);
+    wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
+    userHelpers.getOrderDetails(orderId).then((orderDetails) => {
+      console.log('Success log');
+      res.render('user/order-success',{orderDetails, wishlistCount, cartCount})
+      req.flash.orderId = null
+    }).catch(()=>{
+      res.render('404')
+    })
+  }else{
+    res.redirect('/')
+  }
 })
 
 router.get("/addNewAddress", verifyLogin, async (req, res) => {
@@ -441,8 +454,10 @@ router.get("/user-profile", verifyLogin, async (req, res) => {
   var name = req.flash.Name;
   let address = await userHelpers.getAddressDetails(req.session.user?._id);
   let profile = await userHelpers.getProfile(req.session.user?._id);
+  cartCount = await userHelpers.getCartCount(req.session.user?._id);
+  wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
   let wallet = await userHelpers.walletDtls(req.session.user?._id).catch(() => { console.log('wallet= 0'); })
-  res.render("user/user-profile", { profile, user, name, address, success, failed, wallet });
+  res.render("user/user-profile", { profile, user, name, address, success, failed, wallet,wishlistCount,cartCount });
 });
 
 router.get("/edit-profileAddress", verifyLogin, async (req, res) => {
@@ -525,7 +540,7 @@ router.get('/wishlist', verifyLogin, async (req, res) => {
 // Add to wishlist
 
 
-router.get("/add-to-wishlist/:id", async (req, res) => {
+router.post("/add-to-wishlist/:id", async (req, res) => {
   console.log('\n', req.params.id, 'Wishlist id \n');
   count = await userHelpers.getWishlistCount(req.session.user?._id);
   if (req.session.user) {

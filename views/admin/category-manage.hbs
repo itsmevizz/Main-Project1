@@ -226,11 +226,12 @@
               <form action="/admin/add-category" method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
                   <label for="exampleFormControlInput1" class="form-label">Name</label>
-                  <input type="text" name="Name" class="form-control" />
+                  <span id="name-error" class="text-danger"> </span>
+                  <input type="text" name="Name" id="name" class="form-control"  onkeyup="categoryName()" />
                 </div>
                 <div class="mb-3">
                   <label for="exampleDataList" class="form-label">For</label>
-                  <select class="form-select " aria-label="Default select example" name="Size" multiple>
+                  <select class="form-select " aria-label="Default select example" name="Size" multiple required>
                     {{!-- <option selected></option> --}}
                     <option value="All">All</option>
                     <option value="MEN">MEN</option>
@@ -239,7 +240,8 @@
                 </div>
                 <div>
                   <label for="exampleFormControlTextarea1" class="form-label">Description</label>
-                  <textarea class="form-control" name="Description" rows="3"></textarea>
+                  <span id="description" class="text-danger"> </span>
+                  <textarea class="form-control" name="Description" rows="3" id="Description" onkeyup="validateDescription()"></textarea>
                 </div>
                 <label for="">Image</label>
                 <input type="file" name="Image" id="file-input" class="form-control" multiple>
@@ -251,7 +253,7 @@
                 <p class="text-success">{{success}}</p>
                 {{/if}}
                 {{/if}}
-                <button type="submit" class="btn btn-success mt-2">Submit</button>
+                <button type="submit" class="btn btn-success mt-2" onclick="return submit()">Submit</button>
             </div>
             </form>
           </div>

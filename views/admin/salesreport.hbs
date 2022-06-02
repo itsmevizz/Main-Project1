@@ -1,3 +1,21 @@
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+{{!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css"> --}}
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+
+
+
+
+
 <!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
   <div class="layout-container">
@@ -90,14 +108,14 @@
           </ul>
         </li>
 
-        <li class="menu-item active open">
+        <li class="menu-item ">
           <a href="" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bx-layout"></i>
             <div data-i18n="Layouts">User management</div>
           </a>
 
           <ul class="menu-sub">
-            <li class="menu-item active">
+            <li class="menu-item">
               <a href="/admin/all-users" class="menu-link">
                 <div data-i18n="Without menu">All Users</div>
               </a>
@@ -142,26 +160,7 @@
             </li>
           </ul>
         </li>
-        <li class="menu-item ">
-          <a href="" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-layout"></i>
-            <div data-i18n="Layouts">Offer management</div>
-          </a>
-
-          <ul class="menu-sub">
-            <li class="menu-item ">
-              <a href="/admin/coupons" class="menu-link">
-                <div data-i18n="Without menu">Coupons</div>
-              </a>
-            </li>
-            <li class="menu-item ">
-              <a href="/admin/category-offers" class="menu-link">
-                <div data-i18n="Without navbar">Category offers</div>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="menu-item ">
+        <li class="menu-item">
           <a href="/admin/all-orders" class="menu-link">
             <i class="menu-icon tf-icons bx bx-collection"></i>
             <div data-i18n="Basic">Orders</div>
@@ -215,104 +214,70 @@
           </ul>
         </div>
       </nav>
+
       <!-- / Navbar -->
 
-      <section class="">
-        <link rel="stylesheet" href="/stylesheets/A.style.css.pagespeed.cf.KLDarfLOam.css">
-        <script
-          nonce="8aaf27e1-9593-4b3f-a84d-5b3f6863a186">(function (w, d) { !function (a, e, t, r) { a.zarazData = a.zarazData || {}, a.zarazData.executed = [], a.zaraz = { deferred: [] }, a.zaraz.q = [], a.zaraz._f = function (e) { return function () { var t = Array.prototype.slice.call(arguments); a.zaraz.q.push({ m: e, a: t }) } }; for (const e of ["track", "set", "ecommerce", "debug"]) a.zaraz[e] = a.zaraz._f(e); a.addEventListener("DOMContentLoaded", (() => { var t = e.getElementsByTagName(r)[0], z = e.createElement(r), n = e.getElementsByTagName("title")[0]; for (n && (a.zarazData.t = e.getElementsByTagName("title")[0].text), a.zarazData.w = a.screen.width, a.zarazData.h = a.screen.height, a.zarazData.j = a.innerHeight, a.zarazData.e = a.innerWidth, a.zarazData.l = a.location.href, a.zarazData.r = e.referrer, a.zarazData.k = a.screen.colorDepth, a.zarazData.n = e.characterSet, a.zarazData.o = (new Date).getTimezoneOffset(), a.zarazData.q = []; a.zaraz.q.length;) { const e = a.zaraz.q.shift(); a.zarazData.q.push(e) } z.defer = !0, z.referrerPolicy = "origin", z.src = "https://preview.colorlib.com/cdn-cgi/zaraz/s.js?z=" + btoa(encodeURIComponent(JSON.stringify(a.zarazData))), t.parentNode.insertBefore(z, t) })) }(w, d, 0, "script"); })(window, document);</script>
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-md-6 text-center mb-5">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="table-wrap">
-                <table class="table table-responsive-xl">
-                  <thead>
-                    <tr>
-                      <th>&nbsp;</th>
-                      <th>Email</th>
-                      <th>Number</th>
-                      <th>Username</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                      {{!-- <th>&nbsp;</th> --}}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {{#each users}}
-                    <tr class="alert" role="alert">
-                      <td>{{inc @index}}</td>
-                      <td class="d-flex align-items-center">
-                        <div class="email">
-                          <span>{{this.Email}}</span>
-                          <span>{{this._id}}</span>
-                        </div>
-                      </td>
-                      <td>{{this.Number}}</td>
-                      <td>{{this.Name}}</td>
-                      {{#if this.Status}}
-                      <td class="status"><span class="active">Active</span></td>
-                      {{else}}
-                      <td class="status"><span class="waiting">Blocked</span></td>
-                      {{/if}}
-                      <td>{{#if this.Status}}
-                        <a id="blockUser" class="btn btn-danger btn-sm"
-                          onclick="blockUser('{{this._id}}','{{this.Name}}')" style="color: white;">Block</a>
-                        {{else}}
-                        <a class="btn btn-primary btn-sm" onclick="unblockUser('{{this._id}}','{{this.Name}}')">Activate</a>
-                        {{/if}}
-                      </td>
-                      {{!-- <td>
-                        <button type="submit" class="close" data-dismiss="alert" aria-label="Close">
-                          <a href="/admin/delete-user?id={{this._id}}"
-                            onclick="return confirm('Want to delete {{this.Name}}?')"><span aria-hidden="true">Delete <i
-                                class="fa fa-close"></i></span></a>
-                        </button>
-                      </td> --}}
-                    </tr>
-                    {{/each}}
-                  </tbody>
-                </table>
+      <div class="container-xxl flex-grow-1 container-p-y">
+        <!-- Basic Bootstrap Table -->
+        <a href="/admin/admin-home"><button class="btn-info btn mb-2">Go back </button></a>
+
+        <div class="card">
+          <h5 class="card-header">Products</h5>
+          <div class="table-responsive text-nowrap">
+            <table class="table table-striped" id="reportTable">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Name</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody class="table-border-bottom-0">
+                {{#each orders}}
+                <tr>
+                  <td>{{inc @index}}</td>
+                  <td>{{this.products.Name}}</td>
+                  <td>{{this.quantity}}</td>
+                  <td>{{this.products.Price}}</td>
+                </tr>
+                {{/each}}
+
+              </tbody>
+              <hr>
+              <div class="d-flex justify-content-end me-5 mt-1 align-items-center">
+                <h5 class="me-2">Total</h5>
+                <h4>₹{{orders.[0].totalAmount}}</h4>
               </div>
-            </div>
+            </table>
           </div>
         </div>
-      </section>
-      <script data-cfasync="false"
-        src="https://preview.colorlib.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-      <script src="/javascripts/jquery.min.js"></script>
-      <script src="javascripts/popper.js%2bbootstrap.min.js%2bmain.js.pagespeed.jc.QmeOzhLoYz.js"></script>
-      <script>eval(mod_pagespeed_9xXcEtpYtN);</script>
-      <script>eval(mod_pagespeed_BJGmYHiKmi);</script>
-      <script>eval(mod_pagespeed_5dQ5Pl5NE4);</script>
-      <script defer
-        src="https://static.cloudflareinsights.com/beacon.min.js/v652eace1692a40cfa3763df669d7439c1639079717194"
-        integrity="sha512-Gi7xpJR8tSkrpF7aordPZQlW2DLtzUlZcumS8dMQjwDHEnw9I7ZLyiOj/6tZStRBGtGgN6ceN6cMH8z7etPGlw=="
-        data-cf-beacon='{"rayId":"7089e1dfcc2ea081","token":"cd0b4b3a733644fc843ef0b185f98241","version":"2021.12.0","si":100}'
-        crossorigin="anonymous"></script>
 
-      </section>
-      <!-- Core JS -->
-      <!-- build:js assets/vendor/js/core.js -->
-      <script src="/vendor/libs/jquery/jquery.js"></script>
-      <script src="/vendor/libs/popper/popper.js"></script>
-      <script src="/vendor/js/bootstrap.js"></script>
-      <script src="/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+      </div>
+      <!--/ Basic Bootstrap Table -->
 
-      <script src="/vendor/js/menu.js"></script>
-      <!-- endbuild -->
 
-      <!-- Vendors JS -->
-      <script src="/vendor/libs/apex-charts/apexcharts.js"></script>
+      <script>
 
-      <!-- Main JS -->
-      <script src="/vendor/main.js"></script>
 
-      <!-- Page JS -->
-      <script src="/vendor/dashboards-analytics.js"></script>
+        $(document).ready(function () {
+          var table = $('#reportTable').DataTable({
+            lengthChange: false,
+            buttons: ['copy', 'excel', 'pdf', 'print']
+          });
 
-      <!-- Place this tag in your head or just before your close body tag. -->
-      <script async defer src="https://buttons.github.io/buttons.js"></script>
+          table.buttons().container()
+            .insertBefore('#reportTable_filter');
+        });
+
+      </script>
+
+      {{!--
+      $(document).ready(function () {
+      $('#reportTable').DataTable({
+      dom: 'Bfrtip',
+      buttons: [
+      'copy', 'csv', 'excel', 'pdf', 'print'
+      ]
+      });
+      }); --}}

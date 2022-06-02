@@ -201,7 +201,7 @@
 
             <div class="container-xxl flex-grow-1 container-p-y">
                 <!-- Basic Bootstrap Table -->
-                <a href="/admin/all-orders"><button class="btn-info btn ">Go back </button></a>
+                <a href="/admin/all-orders"><button class="btn-info btn mb-2">Go back </button></a>
                 
                 <div class="card">
                     <h5 class="card-header">Products</h5>
@@ -220,11 +220,11 @@
                             <tbody class="table-border-bottom-0">
                                 <tr>
                                     <td>{{inc @index}}</td>
-                                    <td> <img src="/images/{{this.product.img.[0]}}" alt="Banner img"
+                                    <td> <img src="/images/{{this.img.[0]}}" alt="Banner img"
                                             class="rounded-pill" style="width: 100px; height: 100px;"> </td>
-                                    <td>{{this.product.Name}}</td>
+                                    <td>{{this.Name}}</td>
                                     <td>{{this.quantity}}</td>
-                                    <td>{{this.product.Price}}</td>
+                                    <td>{{this.DiscountPrice}}</td>
                                 </tr>
                             </tbody>
                             {{/each}}

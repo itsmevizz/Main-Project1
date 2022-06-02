@@ -176,8 +176,7 @@
           <div class="navbar-nav align-items-center">
             <div class="nav-item d-flex align-items-center">
               <i class="bx bx-search fs-4 lh-0"></i>
-              <input type="text" class="form-control border-0 shadow-none" placeholder="Search..."
-                aria-label="Search..." />
+              <input type="text" class="form-control border-0 shadow-none" placeholder="Search..." style="cursor: not-allowed;"/>
             </div>
           </div>
           <!-- /Search -->
@@ -208,7 +207,8 @@
               <form action="/admin/add-product" method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
                   <label for="exampleFormControlInput1" class="form-label">Name</label>
-                  <input type="text" name="Name" class="form-control" />
+                  <span id="name-error" class="text-danger"> </span>
+                  <input type="text" name="Name" id="name" class="form-control" onkeyup="validateProductName()" />
                 </div>
                 <div class="mb-3">
                   <label for="exampleFormControlReadOnlyInput1" class="form-label">Category</label>
@@ -239,7 +239,9 @@
                 </div>
                 <div>
                   <label for="exampleFormControlTextarea1" class="form-label">Description</label>
-                  <textarea class="form-control" name="Description" rows="3"></textarea>
+                  <span id="description" class="text-danger"> </span>
+                  <textarea class="form-control" name="Description" id="Description" rows="3"
+                    onkeyup="validateDescription()"></textarea>
                 </div>
                 <label for="">Image</label>
                 <input type="file" name="Image" id="file-input" class="form-control" multiple>
@@ -251,9 +253,9 @@
                 <p class="text-success">{{success}}</p>
                 {{/if}}
                 {{/if}}
-                <button type="submit" class="btn btn-success mt-2">Submit</button>
+                <button type="submit" class="btn btn-success mt-2" onclick="return submit()">Submit</button>
+              </form>
             </div>
-            </form>
           </div>
         </div>
         <section class="col-md-6">

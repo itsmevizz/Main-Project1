@@ -331,27 +331,33 @@ module.exports = {
                     },
                     {
                         $project: {
-                            totalAmount: '$actualAmount',
+                            totalAmount: '$totalAmount',
+                            fromWallet: '$fromWallet',
+                            actualAmount: '$actualAmount',
                             item: "$products.item",
                             quantity: "$products.quantity",
+                            Name: "$products.productName",
+                            img: "$products.productImage",
+                            actualPrice: "$products.actualPrice",
+                            DiscountPrice: "$products.DiscountPrice",
                         },
                     },
-                    {
-                        $lookup: {
-                            from: collection.PRODUCT_COLLECTION,
-                            localField: "item",
-                            foreignField: "_id",
-                            as: "product",
-                        },
-                    },
-                    {
-                        $project: {
-                            totalAmount: 1,
-                            item: 1,
-                            quantity: 1,
-                            product: { $arrayElemAt: ["$product", 0] },
-                        },
-                    },
+                    // {
+                    //   $lookup: {
+                    //     from: collection.PRODUCT_COLLECTION,
+                    //     localField: "item",
+                    //     foreignField: "_id",
+                    //     as: "product",
+                    //   },
+                    // },
+                    // {
+                    //   $project: {
+                    //     totalAmount: 1,
+                    //     item: 1,
+                    //     quantity: 1,
+                    //     product: { $arrayElemAt: ["$product", 0] },
+                    //   },
+                    // },
                 ])
                 .toArray();
             resolve(orderDetails);
@@ -359,8 +365,8 @@ module.exports = {
 
     },
     salesReport: (from, till) => {
-        console.log(from);
-        console.log(till);
+        // console.log(from);
+        // console.log(till);
         return new Promise(async (resolve, reject) => {
             let salesReport = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
                 {
@@ -437,8 +443,20 @@ module.exports = {
                 //     }
                 // }
             ]).toArray()
-            console.log(salesReport);
+            // console.log(salesReport);
             resolve(salesReport)
         })
     },
+
+    getAllorders: () => {
+        return new Promise(async (resolve, reject) => {
+          let orders = await db
+            .get()
+            .collection(collection.ORDER_COLLECTION)
+            .find()
+            .sort({ _id: -1 })
+            .toArray();
+          resolve(orders);
+        });
+      },
 }

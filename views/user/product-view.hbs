@@ -132,7 +132,8 @@
 										<meta itemprop="priceCurrency" content="EUR">
 
 										<div class="current-price">
-											<span itemprop="price" content="34.11">&#8377;{{products.Offers.DiscountPrice}}</span>
+											<span itemprop="price"
+												content="34.11">&#8377;{{products.Offers.DiscountPrice}}</span>
 
 											<span class="discount discount-percentage">Save 5%</span>
 										</div>
@@ -186,117 +187,90 @@
 
 									<div class="product-actions">
 
-										<form action="/add-to-cart"
-											method="post" id="add-to-cart-or-refresh">
-											{{!-- <input type="hidden" name="token" value="">
-											<input type="hidden" name="id_product" value="2"
-												id="product_page_product_id">
-											<input type="hidden" name="id_customization" value="0"
-												id="product_customization_id"> --}}
+										{{!-- <input type="hidden" name="token" value="">
+										<input type="hidden" name="id_product" value="2" id="product_page_product_id">
+										<input type="hidden" name="id_customization" value="0"
+											id="product_customization_id"> --}}
 
 
-											<div class="product-variants">
-												<div class="clearfix product-variants-item">
-													<span class="control-label">Size</span>
-													<select class="form-control form-control-select" id="group_1"
-														data-product-attribute="1" name="Size">
-														<option value="1" title="S" selected="selected">S
-														</option>
-														<option value="2" title="M">M</option>
-														<option value="3" title="L">L</option>
-														<option value="4" title="XL">XL</option>
-													</select>
+										<div class="product-variants">
+											<div class="clearfix product-variants-item">
+												<span class="control-label">Size</span>
+												<select class="form-control form-control-select" id="group_1"
+													data-product-attribute="1" name="Size">
+													<option value="1" title="S" selected="selected">S
+													</option>
+													<option value="2" title="M">M</option>
+													<option value="3" title="L">L</option>
+													<option value="4" title="XL">XL</option>
+												</select>
+											</div>
+										</div>
+
+
+
+
+
+
+										<section class="product-discounts">
+										</section>
+
+
+
+										<div class="product-add-to-cart">
+											<span class="control-label">Quantity</span>
+
+
+											<div class="product-quantity clearfix">
+												<div class="qty">
+													<input type="text" name="Quantity" id="quantity_wanted" value="1"
+														class="input-group" min="1" aria-label="Quantity">
+												</div>
+
+												<div class="">
+													<button class="btn btn-primary add-to-cart"
+														onclick="addToCart('{{products._id}}')">
+														<i class="material-icons shopping-cart">&#xE547;</i>
+														Add to cart
+													</button>
 												</div>
 											</div>
 
 
 
+											<span id="product-availability">
+											</span>
 
 
 
-											<section class="product-discounts">
-											</section>
+											<p class="product-minimal-quantity">
+											</p>
+
+										</div>
 
 
 
-											<div class="product-add-to-cart">
-												<span class="control-label">Quantity</span>
+										<div class="product-additional-info">
 
-
-												<div class="product-quantity clearfix">
-													<div class="qty">
-														<input type="text" name="Quantity" id="quantity_wanted" value="1"
-															class="input-group" min="1" aria-label="Quantity">
-													</div>
-
-													<div class="">
-														<button class="btn btn-primary add-to-cart"
-															 onclick="addToCart('{{products._id}}')">
-															<i class="material-icons shopping-cart">&#xE547;</i>
-															Add to cart
-														</button>
-													</div>
-												</div>
-
-
-
-												<span id="product-availability">
-												</span>
-
-
-
-												<p class="product-minimal-quantity">
-												</p>
-
+											<div class="social-sharing">
+												<span>Share</span>
+												<ul>
+													<li class="facebook"><a href="" title="Share">Share</a></li>
+													<li class="twitter"><a href="" title="Tweet">Tweet</a></li>
+													<li class="googleplus"><a href="" title="Google+">Google+</a></li>
+													<li class="pinterest"><a href="" title="Pinterest">Pinterest</a>
+													</li>
+												</ul>
 											</div>
+											<p class="panel-product-line panel-product-actions">
+												<button id="wishlist_button"
+													onclick="addToWishList('{{products._id}}')">
+													<i class="ion-android-favorite-outline"></i>Add to
+													wishlist
+												</button>
+											</p>
 
-
-
-											<div class="product-additional-info">
-
-												<div class="social-sharing">
-													<span>Share</span>
-													<ul>
-														<li class="facebook"><a
-																href="http://www.facebook.com/sharer.php?u=http://demo.posthemes.com/pos_ecolife_fashion/en/fashion/2-juicy-couture-juicy-quilted-terry-track-jacket.html"
-																title="Share" target="_blank">Share</a></li>
-														<li class="twitter"><a
-																href="https://twitter.com/intent/tweet?text=Juicy%20Couture%20Juicy%20Quilted%20Terry%20Track%20Jacket%20http://demo.posthemes.com/pos_ecolife_fashion/en/fashion/2-juicy-couture-juicy-quilted-terry-track-jacket.html"
-																title="Tweet" target="_blank">Tweet</a></li>
-														<li class="googleplus"><a
-																href="https://plus.google.com/share?url=http://demo.posthemes.com/pos_ecolife_fashion/en/fashion/2-juicy-couture-juicy-quilted-terry-track-jacket.html"
-																title="Google+" target="_blank">Google+</a></li>
-														<li class="pinterest"><a
-																href="http://www.pinterest.com/pin/create/button/?media=http://demo.posthemes.com/pos_ecolife_fashion/369/juicy-couture-juicy-quilted-terry-track-jacket.jpg&amp;url=http://demo.posthemes.com/pos_ecolife_fashion/en/fashion/2-juicy-couture-juicy-quilted-terry-track-jacket.html"
-																title="Pinterest" target="_blank">Pinterest</a>
-														</li>
-													</ul>
-												</div>
-
-												<p class="panel-product-line panel-product-actions">
-													<button href="#"
-														class="poscompare-add compare-button js-poscompare-add"
-														data-id_product="2" ;
-														onclick="posCompare.addCompare($(this),2); return false;"
-														title="Add to compare"><i class="ion-ios-shuffle-strong"></i>Add
-														to
-														compare</button>
-												</p>
-												<p class="panel-product-line panel-product-actions">
-													<a id="wishlist_button" href="#"
-														onclick="WishlistCart('wishlist_block_list', 'add', '2', $('#idCombination').val(), document.getElementById('quantity_wanted').value); return false;"
-														rel="nofollow" title="Add to my wishlist">
-														<i class="ion-android-favorite-outline"></i>Add to
-														wishlist
-													</a>
-												</p>
-
-											</div>
-
-
-
-										</form>
-
+										</div>
 
 									</div>
 
@@ -729,7 +703,7 @@
 
 		</div>
 
-		
+
 
 
 
@@ -762,16 +736,14 @@
 
 						<div class="col-footer social_follow ">
 							<ul>
-								<li class="facebook"><a href="https://www.facebook.com/posthemes"
-										target="_blank">Facebook</a></li>
-								<li class="twitter"><a href="https://twitter.com/posthemes" target="_blank">Twitter</a>
+								<li class="facebook"><a href="https://www.facebook.com/posthemes">Facebook</a></li>
+								<li class="twitter"><a href="https://twitter.com/posthemes">Twitter</a>
 								</li>
-								<li class="youtube"><a href="https://www.youtube.com/user/posthemes"
-										target="_blank">YouTube</a></li>
-								<li class="googleplus"><a href="https://plus.google.com/100616268634541521861/posts"
-										target="_blank">Google +</a></li>
-								<li class="instagram"><a href="https://www.instagram.com/posthemes9234"
-										target="_blank">Instagram</a></li>
+								<li class="youtube"><a href="https://www.youtube.com/user/posthemes">YouTube</a></li>
+								<li class="googleplus"><a
+										href="https://plus.google.com/100616268634541521861/posts">Google +</a></li>
+								<li class="instagram"><a href="https://www.instagram.com/posthemes9234">Instagram</a>
+								</li>
 							</ul>
 						</div>
 
@@ -977,16 +949,16 @@
 <script src="/javascripts/zoomxl.js"></script>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        $(".samll_img").hover(function () {
-            $(".big_img").attr('src', $(this).attr('src'));
-        })
-    })
+	$(document).ready(function () {
+		$(".samll_img").hover(function () {
+			$(".big_img").attr('src', $(this).attr('src'));
+		})
+	})
 </script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        $(".big_img").imagezoomsl({
-            zoomrange: [3, 3]
-        });
-    })
+	$(document).ready(function () {
+		$(".big_img").imagezoomsl({
+			zoomrange: [3, 3]
+		});
+	})
 </script>

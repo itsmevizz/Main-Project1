@@ -87,19 +87,18 @@ router.get('/all-users', (req, res) => {
   })
 })
 
-router.get('/Block-user', (req, res) => {
-  Id = req.query.id
+router.post('/Block-user', (req, res) => {
+  Id = req.body.id
   userHelpers.blockUser(Id).then((response) => {
     console.log(response + '/*/*/');
-    res.redirect('/admin/all-users')
-
+    res.json({blocked:true})
   })
 })
-router.get('/unblock-user', (req, res) => {
-  Id = req.query.id
+router.post('/unblock-user', (req, res) => {
+  Id = req.body.id
   userHelpers.unBlockUser(Id).then((response) => {
     console.log("hi daa kuttaaa");
-    res.redirect('/admin/all-users')
+    res.json({unblocked:true})
   })
 })
 router.get('/delete-user', (req, res) => {
@@ -120,14 +119,14 @@ router.get('/category-manage', (req, res) => {
   })
 })
 router.post('/add-category', upload.single('Image'), (req, res) => {
-  if (req.file && req.body) {
+  if (req.file && req.body.Name) {
     productHelper.addCategory(req.body, req.file,).then((data) => {
       console.log(data + '#%$%%$$$');
       req.flash.success = "Product added successfully";
       res.redirect("/admin/category-manage");
     })
   } else {
-    req.flash.failed = 'Please choose file'
+    req.flash.failed = 'Please give details'
     res.redirect("/admin/category-manage");
   }
 })
@@ -195,7 +194,7 @@ router.post("/edit-product", (req, res) => {
 
 // order manegement
 router.get('/all-orders', (req, res) => {
-  productHelper.getAllorders().then((orders) => {
+  adminHelpers.getAllorders().then((orders) => {
 
     res.render('admin/all-orders', { admin: true, orders })
   })
@@ -435,6 +434,17 @@ router.get('/order-dtls',async(req,res)=>{
   })
 })
 
+
+router.post('/get-report', async (req, res) => {
+
+  let fromDate = new Date(req.body.FromDate)
+  let tillDate = new Date(req.body.ToDate)
+  var orders = await adminHelpers.salesReport(fromDate, tillDate)
+  console.log(orders);
+  res.render('admin/salesreport', {orders, admin: true })
+
+  
+})
 
 
 module.exports = router;
