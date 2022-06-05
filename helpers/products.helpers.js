@@ -115,8 +115,6 @@ module.exports = {
             {
               $set: {
                 status: status,
-                Cancelled: false,
-                Delivered: true,
               },
             }
           );
@@ -128,8 +126,6 @@ module.exports = {
             {
               $set: {
                 status: status,
-                Cancelled: true,
-                Delivered: false,
               },
             }
           );

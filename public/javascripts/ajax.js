@@ -438,6 +438,7 @@ function deliveryStatus(value, orderId) {
         success: (response) => {
           if (response) {
             Swal.fire("success", "Status Updated .", "success");
+            location.reload()
           }
         },
       });

@@ -12,7 +12,16 @@ const async = require("hbs/lib/async");
 const { trusted } = require("mongoose");
 const adminHelpers = require('../helpers/admin-helpers')
 const pdf = require('../public/javascripts/pdf')
-/* GET users listing. */
+require('dotenv').config()
+
+const verifyAdmin = (req, res, next) => {
+  if (req.session.admin) {
+    next();
+  } else {
+    res.redirect("/admin");
+  }
+}
+
 router.get("/", function (req, res, next) {
   if (req.session.admin) {
     res.redirect('admin/admin-home')
@@ -40,7 +49,7 @@ router.get("/admin-home", async (req, res) => {
   res.render("admin/admin-home", { admin: true, topPayMethod, totalRevanue });
 });
 
-router.get('/view-allproducts', (req, res) => {
+router.get('/view-allproducts', verifyAdmin, (req, res) => {
   productHelper.getAllCategory().then((categorys) => {
     let category = categorys
     productHelper.getAllProducts().then((product) => {
@@ -51,11 +60,11 @@ router.get('/view-allproducts', (req, res) => {
   })
 })
 
-router.get("/admin-login", (req, res) => {
+router.get("/admin-login", verifyAdmin, (req, res) => {
   res.render("admin/admin-login", { title, adminlogin: true });
 });
 
-router.get("/add-product", (req, res) => {
+router.get("/add-product", verifyAdmin, (req, res) => {
   success = req.flash.success
   failed = req.flash.failed
   productHelper.getAllCategory().then((categorys) => {
@@ -68,7 +77,7 @@ router.get("/add-product", (req, res) => {
   })
 });
 
-router.post("/add-product", upload.array("Image", 10), (req, res) => {
+router.post("/add-product", verifyAdmin, upload.array("Image", 10), (req, res) => {
   if (req.body.Category && req.files && req.body.Price) {
     productHelper.addProduct(req.body, req.files, () => {
       req.flash.success = "Product added successfully";
@@ -81,7 +90,7 @@ router.post("/add-product", upload.array("Image", 10), (req, res) => {
   }
 });
 
-router.get('/all-users', (req, res) => {
+router.get('/all-users', verifyAdmin, (req, res) => {
   userHelpers.getAllUsers().then((users) => {
     res.render('admin/all-users', { admin: true, users })
   })
@@ -91,17 +100,17 @@ router.post('/Block-user', (req, res) => {
   Id = req.body.id
   userHelpers.blockUser(Id).then((response) => {
     console.log(response + '/*/*/');
-    res.json({blocked:true})
+    res.json({ blocked: true })
   })
 })
 router.post('/unblock-user', (req, res) => {
   Id = req.body.id
   userHelpers.unBlockUser(Id).then((response) => {
     console.log("hi daa kuttaaa");
-    res.json({unblocked:true})
+    res.json({ unblocked: true })
   })
 })
-router.get('/delete-user', (req, res) => {
+router.get('/delete-user', verifyAdmin, (req, res) => {
   let userId = req.query.id;
   console.log(userId);
   userHelpers.deleteUser(userId).then((response) => {
@@ -110,7 +119,7 @@ router.get('/delete-user', (req, res) => {
 })
 // Category management
 
-router.get('/category-manage', (req, res) => {
+router.get('/category-manage', verifyAdmin, (req, res) => {
   productHelper.getAllCategory().then((category) => {
     console.log(category);
     res.render('admin/category-manage', { admin: true, category, failed: req.flash.failed, success: req.flash.success })
@@ -131,7 +140,7 @@ router.post('/add-category', upload.single('Image'), (req, res) => {
   }
 })
 
-router.get('/view-category', (req, res) => {
+router.get('/view-category', verifyAdmin, (req, res) => {
   productHelper.getAllCategory().then((category) => {
     console.log(category);
     res.render('admin/view-category', { admin: true, category })
@@ -141,8 +150,8 @@ router.get('/view-category', (req, res) => {
 
 
 const credential = {
-  username: "admin",
-  password: "admin",
+  username: process.env.adminUsername,
+  password: process.env.adminPassword,
 };
 //login user............
 router.post("/login", (req, res) => {
@@ -168,13 +177,13 @@ router.post("/adminlogout", (req, res) => {
   req.session.admin = null;
   res.redirect("/admin");
 });
-router.get("/delete-product", (req, res) => {
+router.get("/delete-product", verifyAdmin, (req, res) => {
   let productId = req.query.id;
   productHelper.deleteProduct(productId).then((response) => {
     res.redirect("/admin");
   });
 });
-router.get("/edit-product", async (req, res) => {
+router.get("/edit-product", verifyAdmin, async (req, res) => {
   if (req.session.admin) {
     let product = await productHelper.getProDetails(req.query.id);
     console.log(product);
@@ -195,7 +204,16 @@ router.post("/edit-product", (req, res) => {
 // order manegement
 router.get('/all-orders', (req, res) => {
   adminHelpers.getAllorders().then((orders) => {
-
+    orders.map(async (order) => {
+      if (order.status == 'placed') {
+        let options = [{ "option": "Cancelled" }, { "option": "Shipped" }]
+        order.options = options
+      } else if (order.status == "Shipped") {
+        let options = [{ "option": "Delivered" }]
+        order.options = options
+      }
+    })
+    console.log(orders);
     res.render('admin/all-orders', { admin: true, orders })
   })
 })
@@ -212,7 +230,7 @@ router.post('/deleveryStatusUpdate', (req, res) => {
 
 
 // Chart data page
-router.get('/chartdata', (req, res) => {
+router.get('/chartdata', verifyAdmin, (req, res) => {
   res.render('admin/charts', { admin: true })
 })
 
@@ -317,7 +335,8 @@ router.get('/getChartData', async (req, res) => {
   totalUsers.map((usrs) => {
     users.push(usrs.count)
   })
-  let growth = Math.round(grow[0] / grow[1])
+  console.log(grow);
+  let growth = Math.round(grow[1] / grow[0])
 
   let sales = Math.round(sale[0] / sale[1])
 
@@ -334,7 +353,7 @@ router.get('/getChartData', async (req, res) => {
 })
 
 // Banner Managment
-router.get('/bannermanage', (req, res) => {
+router.get('/bannermanage', verifyAdmin, (req, res) => {
   let success = req.flash.success
   res.render('admin/bannermanagement', { admin: true, failed: req.flash.failed, success })
   req.flash.failed = false;
@@ -355,7 +374,7 @@ router.post('/add-banner', uploadBanner.single('Image'), (req, res) => {
 
 // View Banner
 
-router.get('/view-banners', async (req, res) => {
+router.get('/view-banners', verifyAdmin, async (req, res) => {
   let banners = await adminHelpers.getBanners()
   console.log(banners);
   res.render('admin/view-banners', { admin: true, banners })
@@ -378,7 +397,7 @@ router.post('/desable-banner', (req, res) => {
 
 // Coupon Manage
 
-router.get('/coupons', async (req, res) => {
+router.get('/coupons', verifyAdmin, async (req, res) => {
   let coupons = await adminHelpers.getAllCoupons().then((coupons) => {
     res.render('admin/coupon', { admin: true, coupons, failed: req.flash.failed })
     req.flash.failed = false
@@ -404,16 +423,16 @@ router.post('/remove-coupon', async (req, res) => {
   })
 })
 
-router.get('/category-offers', async (req, res) => {
+router.get('/category-offers', verifyAdmin, async (req, res) => {
   let category = await productHelper.getCategoryOfferrr()
-  res.render('admin/category-offer', { admin: true, category,success:req.flash.success })
+  res.render('admin/category-offer', { admin: true, category, success: req.flash.success })
   req.flash.success = null
 })
 
-router.post("/remove-cateOffer",async (req,res)=>{
+router.post("/remove-cateOffer", async (req, res) => {
   console.log('hi cat');
   await adminHelpers.removeCateOffer(req.body).then(() => {
-    res.json({status:true})
+    res.json({ status: true })
   })
 })
 
@@ -424,12 +443,12 @@ router.post('/add-category-offer', (req, res) => {
     res.redirect('/admin/category-offers')
   })
 })
-router.get('/order-dtls',async(req,res)=>{
-  await adminHelpers.getOrderDetails(req.query).then((details)=>{
+router.get('/order-dtls', verifyAdmin, async (req, res) => {
+  await adminHelpers.getOrderDetails(req.query).then((details) => {
     console.log(details);
-    res.render('admin/view-orderDtls',{details, admin:true})
+    res.render('admin/view-orderDtls', { details, admin: true })
 
-  }).catch((e)=>{
+  }).catch((e) => {
     console.log('Hi')
   })
 })
@@ -437,13 +456,14 @@ router.get('/order-dtls',async(req,res)=>{
 
 router.post('/get-report', async (req, res) => {
 
+  var tomorrow = new Date(req.body.ToDate);
+  tomorrow.setDate(tomorrow.getDate() + 1);
   let fromDate = new Date(req.body.FromDate)
-  let tillDate = new Date(req.body.ToDate)
-  var orders = await adminHelpers.salesReport(fromDate, tillDate)
+  var orders = await adminHelpers.salesReport(fromDate, tomorrow)
   console.log(orders);
-  res.render('admin/salesreport', {orders, admin: true })
+  res.render('admin/salesreport', { orders, admin: true })
 
-  
+
 })
 
 

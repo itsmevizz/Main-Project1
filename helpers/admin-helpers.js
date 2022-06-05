@@ -365,17 +365,27 @@ module.exports = {
 
     },
     salesReport: (from, till) => {
-        // console.log(from);
-        // console.log(till);
+        console.log(from);
+        console.log(till);
         return new Promise(async (resolve, reject) => {
             let salesReport = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
                 {
-                    $unwind: "$products"
+                    $match: {
+                        $or: [{ status: "Delivered" }, { status: "Placed" }, { status: "Shipped" }],
+                        Date: {
+                            $gte: from,
+                            $lte: till
+                        }
+                    }
+                },
+                {
+                    $unwind:"$products",
                 },
                 {
                     $project: {
-                        item: "$products.item",
-                        quantity: "$products.quantity",
+                        products:"$products.productName",
+                        quantity:"$products.quantity",
+                        productPrice:"$products.DiscountPrice",
                         totalAmount: "$actualAmount",
                         status: "$status",
                         date: "$Date",
@@ -384,52 +394,18 @@ module.exports = {
                     }
                 },
                 {
-                    $match: {
-                        $or: [{ status: "Delivered" }, { status: "Placed" }, { status: "Shipped" }],
-                        date: {
-                            $gte: from,
-                            $lte: till
-                        }
-                    }
+                    $group: {
+                        _id: "$_id",
+                        // products:1,
+                        totalQty: { $sum: "$quantity" },
+                        totalSale: { $sum: "$productPrice" },
+                        netCost: {
+                            $sum: {
+                                $multiply: ["$quantity", "$productPrice"]
+                            }
+                        },
+                    },
                 },
-                {
-                    $lookup: {
-                        from: collection.PRODUCT_COLLECTION,
-                        localField: "item",
-                        foreignField: "_id",
-                        as: "products"
-                    }
-                },
-                {
-                    $unwind: "$products"
-                },
-                {
-                    $project: {
-                        quantity: 1,
-                        deliveryDetails: 1,
-                        PayMethod: 1,
-                        date: 1,
-                        totalAmount: 1,
-                        products: "$products",
-                        productName: "$products.Name",
-                        Price: "$products.Price",
-                        totalAmount: 1
-
-                    }
-                },
-                // {
-                //     $group: {
-                //         _id: "$_id",
-                //         Name: "$productName",
-                //         totalQty: { $sum: "$quantity" },
-                //         totalSale: { $sum: "$Price" },
-                //         netCost: {
-                //             $sum: {
-                //                 $multiply: ["$quantity", "$Price"]
-                //             }
-                //         },
-                //     },
-                // },
                 // {
                 //     $project: {
                 //         _id: 1,

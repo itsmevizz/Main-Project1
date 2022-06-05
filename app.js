@@ -9,10 +9,11 @@ let bodyParser = require("body-parser");
 let db = require("./config/database");
 let flash = require("connect-flash");
 let helpers = require("handlebars-helpers")();
-
 let adminRouter = require("./routes/admin");
 let usersRouter = require("./routes/users");
 let pdfRouter = require('./public/javascripts/pdf')
+
+require('dotenv').config()
 
 let app = express();
 
@@ -21,17 +22,19 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 app.engine(
   "hbs",
-  hbs.engine({helpers:{
-    inc: function (value, options) {
-      return parseInt(value) + 1;
-    }
-  },
+  hbs.engine({
+    helpers: {
+      inc: function (value, options) {
+        return parseInt(value) + 1;
+      }
+    },
     extname: "hbs",
     defaultLayout: "layouts",
     layoutsDis: __dirname + "/views/layout/",
     partialsDir: __dirname + "/views/partials/",
   })
 );
+
 app.use((req, res, next) => {
   if (!req.user) {
     res.header(
@@ -53,7 +56,7 @@ app.use(flash());
 
 app.use("/admin", adminRouter);
 app.use("/", usersRouter);
-app.use('/pdf',pdfRouter)
+app.use('/pdf', pdfRouter)
 const { error } = require("console");
 
 //db connect
@@ -65,7 +68,7 @@ db.connect((err) => {
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  res.render('404',{error:true})
+  res.render('404', { error: true })
   // next(createError(404));
 });
 
@@ -78,9 +81,9 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   // res.render("error");
-    // render the error page
-    //  (err.status || 500);
-    res.render("500",{error:true});
+  // render the error page
+  //  (err.status || 500);
+  res.render("500", { error: true });
 });
 
 module.exports = app;

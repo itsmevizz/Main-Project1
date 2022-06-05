@@ -3,8 +3,7 @@ function getChart() {
     url: "/admin/getChartData",
     method: "get",
     success: async (chartDatas) => {
-      console.log(chartDatas);
-      const ctx = document.getElementById("myChart").getContext("2d");
+        const ctx = document.getElementById("myChart").getContext("2d");
       const myChart = new Chart(ctx, {
         type: "bar",
         data: {
@@ -31,11 +30,28 @@ function getChart() {
           ],
         },
         options: {
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          
           scales: {
             y: {
-              beginAtZero: true,
+              title:{
+                color:'black',
+                display:'true',
+                text:'Amount'
+              }
             },
-          },
+            x: {
+              title:{
+                color:'black',
+                display:'true',
+                text:'Day'
+              }
+            }
+          }
         },
       });
 
@@ -69,11 +85,28 @@ function getChart() {
           ],
         },
         options: {
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          
           scales: {
             y: {
-              beginAtZero: true,
+              title:{
+                color:'black',
+                display:'true',
+                text:'Amount'
+              }
             },
-          },
+            x: {
+              title:{
+                color:'black',
+                display:'true',
+                text:'Month'
+              }
+            }
+          }
         },
       });
 
@@ -107,11 +140,27 @@ function getChart() {
           ],
         },
         options: {
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
           scales: {
             y: {
-              beginAtZero: true,
+              title:{
+                color:'black',
+                display:'true',
+                text:'Amount'
+              }
             },
-          },
+            x: {
+              title:{
+                color:'black',
+                display:'true',
+                text:'Year'
+              }
+            }
+          }
         },
       });
     },

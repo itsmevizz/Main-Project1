@@ -1,4 +1,9 @@
 <script defer src="https://cdn.crop.guide/loader/l.js?c=RVKTKF"></script>
+
+{{!-- <link rel="stylesheet" href="/richtexteditor/richtexteditor/rte_theme_default.css">
+<script src="/richtexteditor/richtexteditor/rte.js"></script>
+<script src="/richtexteditor/richtexteditor/plugins/all_plugins.js"></script> --}}
+
 <!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
   <div class="layout-container">
@@ -240,7 +245,7 @@
                 <div>
                   <label for="exampleFormControlTextarea1" class="form-label">Description</label>
                   <span id="description" class="text-danger"> </span>
-                  <textarea class="form-control" name="Description" id="Description" rows="3"
+                  <textarea class="form-control" name="Description" id="inp_editor1" rows="3"
                     onkeyup="validateDescription()"></textarea>
                 </div>
                 <label for="">Image</label>
@@ -401,4 +406,8 @@
       });
     }
   }
+</script>
+
+<script>
+ var editor1 = new RichTextEditor("#inp_editor1"); 
 </script>

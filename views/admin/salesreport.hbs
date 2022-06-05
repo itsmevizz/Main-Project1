@@ -1,21 +1,26 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
 {{!--
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css"> --}}
-
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.bootstrap5.min.css">
 
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
 <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.bootstrap5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
-
-
-
-
-
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.colVis.min.js"></script>
 <!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
   <div class="layout-container">
@@ -231,6 +236,8 @@
                   <th>Name</th>
                   <th>Quantity</th>
                   <th>Price</th>
+                  <th>Date</th>
+
                 </tr>
               </thead>
               <tbody class="table-border-bottom-0">
@@ -240,9 +247,9 @@
                   <td>{{this.products.Name}}</td>
                   <td>{{this.quantity}}</td>
                   <td>{{this.products.Price}}</td>
+                  <td>{{moment this.date format="DD-MM-YYYY"}}</td>
                 </tr>
                 {{/each}}
-
               </tbody>
               <hr>
               <div class="d-flex justify-content-end me-5 mt-1 align-items-center">
@@ -260,15 +267,15 @@
       <script>
 
 
-        $(document).ready(function () {
-          var table = $('#reportTable').DataTable({
-            lengthChange: false,
-            buttons: ['copy', 'excel', 'pdf', 'print']
-          });
-
-          table.buttons().container()
-            .insertBefore('#reportTable_filter');
-        });
+     $(document).ready(function() {
+    var table = $('#reportTable').DataTable( {
+        lengthChange: false,
+        buttons: [ 'copy', 'excel', 'pdf', 'colvis' ]
+    } );
+ 
+    table.buttons().container()
+        .appendTo( '#reportTable_wrapper .col-md-6:eq(0)' );
+} );
 
       </script>
 

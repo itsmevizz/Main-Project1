@@ -13,13 +13,12 @@ var verifyLogin = require("../middleware/verifySession");
 const paypal = require("paypal-rest-sdk");
 const { disconnect } = require("mongoose");
 const adminHelpers = require("../helpers/admin-helpers");
+require('dotenv').config()
 
 paypal.configure({
   mode: "sandbox", //sandbox or live
-  client_id:
-    "AXGObqtYcejaOhJKp3Ek_YeVUbneEopHvSuraohas7YwCNPtA90TnWJ6UEC7Vuerl-lcU206rGOJUTWY",
-  client_secret:
-    "EF4Vy1gkb7uyWyC9VLN81XwgeHtgpU7fwRcnpVTkAYiUgSQuHyiTygJvRZcdk_y6pipWVxoaUUoLqX3h",
+  client_id:process.env.paypalClientId,
+  client_secret:process.env.paypalClientSecret,
 });
 
 /* GET home page. */
@@ -99,21 +98,21 @@ router.post("/user-login", (req, res) => {
           if (response.status) {
             var Number = response.Number;
             var Name = response.Name;
-            // console.log(Name);
-            // client.verify
-            // .services(config.serviceSID)
-            // .verifications
-            // .create({
-            //   to:`+91${Number}`,
-            //   channel:'sms'
-            // })
-            // .then((data)=>{
-            // res.render('user/otp',{Number, Name})
-            // })
+            console.log(Name);
+            client.verify
+            .services(config.serviceSID)
+            .verifications
+            .create({
+              to:`+91${Number}`,
+              channel:'sms'
+            })
+            .then((data)=>{
+            res.render('user/otp',{login: true,Number, Name})
+            })
             // res.redirect("/");
-            req.session.user = response.user;
-            req.flash.Name = Name;
-            res.redirect("/");
+            // req.session.user = response.user;
+            // req.flash.Name = Name;
+            // res.redirect("/");
           } else {
             req.flash.loginErr = "Invallid Email or Password";
             res.redirect("/user-login");
@@ -151,7 +150,7 @@ router.post("/user-signUp", (req, res) => {
 });
 
 router.get("/otp", (req, res) => {
-  res.render("user/otp");
+  res.render("user/otp", {login:true});
 });
 
 router.post("/otp-varify", (req, res) => {
@@ -172,9 +171,10 @@ router.post("/otp-varify", (req, res) => {
       if (data.status == "approved") {
         req.session.user = Name;
         res.redirect("/");
+        req.flash.Number = null;
       } else {
         otpErr = "Invalid OTP";
-        res.render("user/otp", { otpErr, Number });
+        res.render("user/otp", {login:true, otpErr, Number });
       }
     });
 });
@@ -410,7 +410,6 @@ router.get('/order-placed',verifyLogin, async (req, res) => {
     cartCount = await userHelpers.getCartCount(req.session.user?._id);
     wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
     userHelpers.getOrderDetails(orderId).then((orderDetails) => {
-      console.log('Success log');
       res.render('user/order-success',{orderDetails, wishlistCount, cartCount})
       req.flash.orderId = null
     }).catch(()=>{

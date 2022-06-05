@@ -236,17 +236,19 @@
                       </p>
                       <div>
                         <form action="/admin/get-report" method="post">
-                          <button  class="btn btn-sm btn-outline-primary" type="submit">Download The Report</button>
-                        <section class="d-flex">
-                          <div class="me-1">
-                          <label for="Date">From</label>
-                        <input type="date" class="form-control mt-1" style="width: 150px;" name="FromDate" rows="3" required />
-                        </div>
-                        <div>
-                          <label for="Date">To</label>
-                        <input type="date" class="form-control mt-1" style="width: 150px;" name="ToDate" rows="3" required />
-                        </div>
-                        </section>
+                          <button class="btn btn-sm btn-outline-primary" type="submit">Download The Report</button>
+                          <section class="d-flex">
+                            <div class="me-1">
+                              <label for="Date">From</label>
+                              <input type="date" class="form-control mt-1" style="width: 150px;" name="FromDate"
+                                rows="3" required />
+                            </div>
+                            <div>
+                              <label for="Date">To</label>
+                              <input type="date" class="form-control mt-1" style="width: 150px;" name="ToDate" rows="3"
+                                required />
+                            </div>
+                          </section>
                         </form>
                       </div>
                     </div>
@@ -584,7 +586,11 @@
     options: {
       scales: {
         y: {
-          beginAtZero: true
+          title:{
+            color:'black',
+            display:'true',
+            text:'Count'
+          }
         }
       }
     }

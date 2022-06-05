@@ -253,7 +253,7 @@
                                     <td>{{this.deliveryDetails.Address}} <br>{{this.deliveryDetails.Pincode}}
                                         <br>{{this.deliveryDetails.Mobile}}
                                     </td>
-                                    <td>{{this.Date}}</td>
+                                    <td>{{moment this.date format="DD-MM-YYYY"}}</td>
                                     <td>{{this.actualAmount}}</td>
                                     {{!-- <a href="/admin/cancelOrder/{{this._id}}" class="btn btn-success"></a>
                                     --}}
@@ -267,12 +267,14 @@
                                     <td> <select onchange="deliveryStatus(value,'{{this._id}}')" class="custom-select"
                                             style="width: 7rem;">
 
-                                            <option value="{{this.status}}" selected disabled> {{this.status}}
-                                            </option>
-                                            <option value="Cancelled">Cancelled</option>
+                                            <option value="{{this.status}}" selected disabled> {{this.status}}</option>
+                                            {{#each options}}
+                                            <option value={{this.option}}>{{this.option}}</option>
+                                            {{/each}}
+                                            {{!-- <option value="Cancelled">Cancelled</option>
                                             <option value="Pending">Pending</option>
                                             <option value="Shipped">Ship</option>
-                                            <option value="Delivered">Delivered</option>
+                                            <option value="Delivered">Delivered</option> --}}
                                         </select></td>
                                 </tr>
                             </tbody>
