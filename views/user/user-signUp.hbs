@@ -1,4 +1,53 @@
-<div class="form-modal">
+
+
+ <div class="form-modal col-md-5 col-sm-5">
+  <div class="form-toggle">
+    <div>
+      <a href="/user-login"><button id="login-toggle" style="color: black;">log in</button></a>
+    </div>
+    <div>
+      <button id="signup-toggle" style="color: red;">sign up</button>
+    </div>
+  </div>
+
+  <div id="login-form">
+    <form action="/user-login" method="post" class="pb-5">
+      <span class="text-center">
+        <p>SIGN UP WITH EMAIL</p>
+      </span>
+      <label class="form-label mb-1" style="font-family: Kokoro; font-size: 15px;">EMAIL ADDRESS :</label>
+      <span id="email-error" class="text-danger"></span>
+      <input type="email" name="Email" id="email" placeholder="Enter your email" onkeyup="validateEmaill()" />
+      <label class="form-label mb-1 text-uppercase" style="font-family: Kokoro; font-size: 15px;">Name :</label>
+      <span id="name-error" class="text-danger"> </span>
+      <input type="text" name="Name" id="name" placeholder="Choose username" onkeyup="validateNamee()" />
+      <label class="form-label mb-1 text-uppercase" style="font-family: Kokoro; font-size: 15px;">Password :</label>
+      <span id="password-error" class="text-danger"></span>
+      <input type="password" name="Password" id="password" placeholder="Create password"
+        onkeyup="validatePasswordd()" />
+      <label class="form-label mb-1 text-uppercase" style="font-family: Kokoro; font-size: 15px;">Mobile Number:</label>
+      <span id="number-error" class="text-danger"></span>
+      <input type="text" name="Number" id="number" placeholder="Mobile number" maxlength="10"
+        onkeyup="validateNumberr()" />
+    {{#if referral}}
+      <input type="text" value="{{referral}}" name="referral"  hidden>
+      {{/if}}
+      <button type="submit" class="btn signup mt-3" onclick="return validateFormm()" id="submit">create account</button>
+      <span id="submit-error" class="text-danger ms-3"></span>
+      {{#if failed}}
+      <span class="text-danger ms-3">{{failed}}</span>
+      {{/if}}
+    </form>
+  </div>
+</div>
+
+
+
+
+
+{{!-- 
+<section id="wrapper">
+<div class="form-modal col-md-5 col-sm-4 col-xs-2">
 
   <div class="form-toggle">
     <div>
@@ -40,6 +89,8 @@
   </div>
 
 </div>
+</section> --}}
+  
 <script>
   var nameError = document.getElementById('name-error');
   var nameOk = document.getElementById("done");
@@ -115,8 +166,24 @@
   }
 
 </script>
-<style>
+  <style>
   body {
     background: #C4C4C4;
   }
-</style>
+
+  #Hide:hover {
+    cursor: default;
+    color: #FF0000;
+  }
+
+  .form-modal {
+    position: relative;
+    max-width: 830px;
+    max-height: 100%;
+    margin-top: 4em;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.1)
+  }
+</style> 
