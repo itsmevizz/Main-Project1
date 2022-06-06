@@ -384,43 +384,39 @@ module.exports = {
                 {
                     $project: {
                         products:"$products.productName",
+                        totalAmount: "$totalAmount",
                         quantity:"$products.quantity",
                         productPrice:"$products.DiscountPrice",
-                        totalAmount: "$actualAmount",
-                        status: "$status",
                         date: "$Date",
                         PayMethod: '$PaymentMethode',
-                        deliveryDetails: "$deliveryDetails"
                     }
                 },
-                {
-                    $group: {
-                        _id: "$_id",
-                        // products:1,
-                        totalQty: { $sum: "$quantity" },
-                        totalSale: { $sum: "$productPrice" },
-                        netCost: {
-                            $sum: {
-                                $multiply: ["$quantity", "$productPrice"]
-                            }
-                        },
-                    },
-                },
-                // {
-                //     $project: {
-                //         _id: 1,
-                //         Name:1,
-                //         totalQty: 1,
-                //         totalSale: 1,
-                //         netCost: 1,
-                //         //   profit: {
-                //         //     $subtract:["$totalSale","$netCost"]
-                //         //   }
-                //     }
-                // }
             ]).toArray()
             // console.log(salesReport);
             resolve(salesReport)
+        })
+    },
+    grandTotal: (from, till) => {
+        return new Promise(async (resolve, reject) => {
+            let grandTotal = await db.get().collection(collection.ORDER_COLLECTION)
+                .aggregate([
+                    {
+                        $match: {
+                            $or: [{ status: "Delivered" }, { status: "Placed" }, { status: "Shipped" }],
+                            Date: {
+                                $gte: from,
+                                $lte: till
+                            }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: null,
+                            grandTotal: { $sum: "$totalAmount" },
+                        },
+                    },
+                ]).toArray()
+                resolve(grandTotal)
         })
     },
 

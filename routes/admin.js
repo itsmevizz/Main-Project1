@@ -6,12 +6,11 @@ const upload = require("../middleware/multer");
 const uploadBanner = require('../middleware/bannerMulter')
 var productHelper = require("../helpers/products.helpers");
 const userHelpers = require("../helpers/user-helpers");
-const { response } = require("../app");
+const { response, locals } = require("../app");
 const { getAllProducts } = require("../helpers/products.helpers");
 const async = require("hbs/lib/async");
 const { trusted } = require("mongoose");
 const adminHelpers = require('../helpers/admin-helpers')
-const pdf = require('../public/javascripts/pdf')
 require('dotenv').config()
 
 const verifyAdmin = (req, res, next) => {
@@ -459,9 +458,13 @@ router.post('/get-report', async (req, res) => {
   var tomorrow = new Date(req.body.ToDate);
   tomorrow.setDate(tomorrow.getDate() + 1);
   let fromDate = new Date(req.body.FromDate)
-  var orders = await adminHelpers.salesReport(fromDate, tomorrow)
-  console.log(orders);
-  res.render('admin/salesreport', { orders, admin: true })
+  let orders = await adminHelpers.salesReport(fromDate, tomorrow)
+  let grandTotal = await adminHelpers.grandTotal(fromDate,tomorrow)
+  let total = []
+  grandTotal.map((usrs) => {
+    total.push(usrs.grandTotal)
+  })
+  res.render('admin/salesreport', { orders,total, admin: true })
 
 
 })

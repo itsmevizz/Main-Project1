@@ -20,9 +20,6 @@
 			<div id="content-wrapper" class="col-xs-12">
 				{{#if products}}
 				<section id="main" itemscope itemtype="https://schema.org/Product">
-					<meta itemprop="url"
-						content="http://demo.posthemes.com/pos_ecolife_fashion/en/fashion/2-9-juicy-couture-juicy-quilted-terry-track-jacket.html#/1-size-s">
-
 					<div class="row">
 						<div class="col-md-6 ">
 							<section class="page-content" id="content">
@@ -79,36 +76,19 @@
 								<h1 class="h1 namne_details" itemprop="name">{{products.Name}}</h1>
 
 
-								<p class="reference">Reference:<span> demo_3</span></p>
+								<p class="reference">Stock:<span>{{products.Stock}} </span></p>
 								<div id="product_comments_block_extra" class="no-print" itemprop="aggregateRating"
-									itemscope itemtype="https://schema.org/AggregateRating">
-									<div class="comments_note clearfix">
-										<span>Rating&nbsp;</span>
-										<div class="star_content clearfix">
+									itemscope>
 
-											<div class="star star_on"></div>
-
-											<div class="star star_on"></div>
-
-											<div class="star star_on"></div>
-
-											<div class="star star_on"></div>
-
-											<div class="star star_on"></div>
-											<meta itemprop="worstRating" content="0" />
-											<meta itemprop="ratingValue" content="5" />
-											<meta itemprop="bestRating" content="5" />
-										</div>
-									</div> <!-- .comments_note -->
 
 									<ul class="comments_advices">
 										<li>
-											<a href="#idTab5" class="reviews">
+											<a href="#idTab5" class="reviews" style="cursor: not-allowed;">
 												Read reviews (<span itemprop="reviewCount">1</span>)
 											</a>
 										</li>
 										<li>
-											<a class="open-comment-form">
+											<a class="open-comment-form" style="cursor: not-allowed;">
 												Write a review
 											</a>
 										</li>
@@ -128,31 +108,20 @@
 
 									<div class="product-price h5 has-discount" itemprop="offers" itemscope
 										itemtype="https://schema.org/Offer">
-										<link itemprop="availability" href="https://schema.org/InStock" />
+										<link itemprop="availability" />
 										<meta itemprop="priceCurrency" content="EUR">
 
 										<div class="current-price">
 											<span itemprop="price"
 												content="34.11">&#8377;{{products.Offers.DiscountPrice}}</span>
 
-											<span class="discount discount-percentage">Save 5%</span>
+											<span class="discount discount-percentage">Save
+												{{products.Offers.Discount}}%</span>
 										</div>
 
 
 
 									</div>
-
-
-
-
-
-
-
-
-
-
-
-
 
 									<div class="tax-shipping-delivery-label">
 
@@ -252,20 +221,11 @@
 
 										<div class="product-additional-info">
 
-											<div class="social-sharing">
-												<span>Share</span>
-												<ul>
-													<li class="facebook"><a href="" title="Share">Share</a></li>
-													<li class="twitter"><a href="" title="Tweet">Tweet</a></li>
-													<li class="googleplus"><a href="" title="Google+">Google+</a></li>
-													<li class="pinterest"><a href="" title="Pinterest">Pinterest</a>
-													</li>
-												</ul>
-											</div>
+
 											<p class="panel-product-line panel-product-actions">
 												<button id="wishlist_button"
 													onclick="addToWishList('{{products._id}}')">
-													<i class="ion-android-favorite-outline"></i>Add to
+													<i class="fa-regular fa-heart"></i>Add to
 													wishlist
 												</button>
 											</p>
@@ -275,34 +235,7 @@
 									</div>
 
 
-									<div id="block-reassurance">
-										<ul>
-											<li>
-												<div class="block-reassurance-item">
-													<img src="http://demo.posthemes.com/pos_ecolife_fashion/modules/blockreassurance/img/ic_verified_user_black_36dp_1x.png"
-														alt="Security policy (edit with Customer reassurance module)">
-													<span class="h6">Security policy (edit with Customer
-														reassurance module)</span>
-												</div>
-											</li>
-											<li>
-												<div class="block-reassurance-item">
-													<img src="http://demo.posthemes.com/pos_ecolife_fashion/modules/blockreassurance/img/ic_local_shipping_black_36dp_1x.png"
-														alt="Delivery policy (edit with Customer reassurance module)">
-													<span class="h6">Delivery policy (edit with Customer
-														reassurance module)</span>
-												</div>
-											</li>
-											<li>
-												<div class="block-reassurance-item">
-													<img src="http://demo.posthemes.com/pos_ecolife_fashion/modules/blockreassurance/img/ic_swap_horiz_black_36dp_1x.png"
-														alt="Return policy (edit with Customer reassurance module)">
-													<span class="h6">Return policy (edit with Customer
-														reassurance module)</span>
-												</div>
-											</li>
-										</ul>
-									</div>
+
 
 
 								</div>
@@ -475,121 +408,7 @@
 											</p>
 
 										</div>
-										<div class="container">
-											<!-- Trigger the modal with a button -->
-											<!-- Modal -->
-											<div class="modal fade" id="myModal" role="dialog">
-												<div class="modal-dialog">
-													<!-- Modal content-->
-													<div class="modal-content">
-														<div class="modal-body">
-															<div id="new_comment_form">
-																<form id="id_new_comment_form" action="#">
-																	<h2 class="title">Write your review</h2>
-																	<div class="row">
-																		<div
-																			class="product clearfix col-xs-12 col-sm-6">
-																			<img src="http://demo.posthemes.com/pos_ecolife_fashion/369-medium_default/juicy-couture-juicy-quilted-terry-track-jacket.jpg"
-																				alt="Juicy Couture Juicy Quilted Terry Track Jacket" />
-																			<div class="product_desc">
-																				<p class="product_name">
-																					<strong>Juicy Couture Juicy
-																						Quilted Terry Track
-																						Jacket</strong>
-																				</p>
-																			</div>
-																		</div>
-																		<div
-																			class="new_comment_form_content col-xs-12 col-sm-6">
-																			<h2>Write your review</h2>
-																			<div id="new_comment_form_error"
-																				class="error"
-																				style="display:none;padding:15px 25px">
-																				<ul></ul>
-																			</div>
-																			<ul id="criterions_list">
-																				<li>
-																					<label>Quality</label>
-																					<div class="star_content">
-																						<input class="star" type="radio"
-																							name="criterion[1]"
-																							value="1" />
-																						<input class="star" type="radio"
-																							name="criterion[1]"
-																							value="2" />
-																						<input class="star" type="radio"
-																							name="criterion[1]"
-																							value="3" />
-																						<input class="star" type="radio"
-																							name="criterion[1]"
-																							value="4" />
-																						<input class="star" type="radio"
-																							name="criterion[1]"
-																							value="5"
-																							checked="checked" />
-																					</div>
-																					<div class="clearfix"></div>
-																				</li>
-																			</ul>
-																			<label for="comment_title">Title for
-																				your review<sup
-																					class="required">*</sup></label>
-																			<input id="comment_title" name="title"
-																				type="text" value="" />
-																			<label for="content">Your review<sup
-																					class="required">*</sup></label>
-																			<textarea id="content"
-																				name="content"></textarea>
-																			<label>Your name<sup
-																					class="required">*</sup></label>
-																			<input id="commentCustomerName"
-																				name="customer_name" type="text"
-																				value="" />
-																			<div id="new_comment_form_footer">
-																				<input id="id_product_comment_send"
-																					name="id_product" type="hidden"
-																					value='2' />
-																				<p class="fl required"
-																					style="margin-bottom:10px;">
-																					<sup>*</sup> Required fields
-																				</p>
-																				<p class="fr">
-																					<button id="submitNewMessage"
-																						class="btn btn-secondary"
-																						name="submitMessage"
-																						type="submit">Send</button>
-																					&nbsp;
-																					or&nbsp;
-																					<button type="button"
-																						class="closefb btn btn-secondary"
-																						data-dismiss="modal"
-																						aria-label="Close">
-																						<span
-																							aria-hidden="true">Cancel</span>
-																					</button>
-																				</p>
-																				<div class="clearfix"></div>
-																			</div>
-																		</div>
-																	</div>
-																</form>
-																<!-- /end new_comment_form_content -->
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="modal fade" id="result_comment" role="dialog">
-												<div class="modal-dialog">
-													<div class="modal-content">
-														<div class="modal-body">
-															<h2>Your comment is submitted</h2>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<!-- End fancybox -->
+
 
 									</div>
 
@@ -601,73 +420,7 @@
 						</div>
 					</div>
 
-					<div class="modal fade js-product-images-modal" id="product-modal">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<div class="modal-body">
-									<div class="view-products">
-										<figure>
-											<img class="js-modal-product-cover product-cover-modal" width="800"
-												src="http://demo.posthemes.com/pos_ecolife_fashion/369-large_default/juicy-couture-juicy-quilted-terry-track-jacket.jpg"
-												alt="" title="" itemprop="image">
-											<figcaption class="image-caption">
 
-												<div id="product-description-short" itemprop="description">
-													<ul>
-														<li>
-															<div>Score extra points when it comes to your sporty
-																look with the Juicy Couture™ Juicy Quilted Terry
-																Track Jacket.</div>
-														</li>
-														<li>
-															<div>Soft terry construction in a quilted design.
-															</div>
-														</li>
-														<li>
-															<div>Front zipper closure.</div>
-														</li>
-														<li>
-															<div>61% cotton, 39% polyester;<br />Lining: 58%
-																cotton, 42% polyester.</div>
-														</li>
-													</ul>
-												</div>
-
-											</figcaption>
-										</figure>
-									</div>
-									<aside id="thumbnails_modal">
-
-										<div class="thumb-container">
-											<img data-image-large-src="http://demo.posthemes.com/pos_ecolife_fashion/369-large_default/juicy-couture-juicy-quilted-terry-track-jacket.jpg"
-												class="thumb js-modal-thumb"
-												src="http://demo.posthemes.com/pos_ecolife_fashion/369-home_default/juicy-couture-juicy-quilted-terry-track-jacket.jpg"
-												alt="" title="" width="360" itemprop="image">
-										</div>
-										<div class="thumb-container">
-											<img data-image-large-src="http://demo.posthemes.com/pos_ecolife_fashion/370-large_default/juicy-couture-juicy-quilted-terry-track-jacket.jpg"
-												class="thumb js-modal-thumb"
-												src="http://demo.posthemes.com/pos_ecolife_fashion/370-home_default/juicy-couture-juicy-quilted-terry-track-jacket.jpg"
-												alt="" title="" width="360" itemprop="image">
-										</div>
-										<div class="thumb-container">
-											<img data-image-large-src="http://demo.posthemes.com/pos_ecolife_fashion/371-large_default/juicy-couture-juicy-quilted-terry-track-jacket.jpg"
-												class="thumb js-modal-thumb"
-												src="http://demo.posthemes.com/pos_ecolife_fashion/371-home_default/juicy-couture-juicy-quilted-terry-track-jacket.jpg"
-												alt="" title="" width="360" itemprop="image">
-										</div>
-										<div class="thumb-container">
-											<img data-image-large-src="http://demo.posthemes.com/pos_ecolife_fashion/372-large_default/juicy-couture-juicy-quilted-terry-track-jacket.jpg"
-												class="thumb js-modal-thumb"
-												src="http://demo.posthemes.com/pos_ecolife_fashion/372-home_default/juicy-couture-juicy-quilted-terry-track-jacket.jpg"
-												alt="" title="" width="360" itemprop="image">
-										</div>
-
-									</aside>
-								</div>
-							</div><!-- /.modal-content -->
-						</div><!-- /.modal-dialog -->
-					</div><!-- /.modal -->
 
 					<script type="text/javascript">
 						$(document).ready(function () {
@@ -721,31 +474,18 @@
 
 					<div class="col-md-4 links footer_block">
 						<div class="footer_about_us">
-							<div class="logo_footer"><a href="#"><img
-										src="http://demo.posthemes.com/pos_ecolife_fashion/img/cms/logo_footer.png"
-										alt="" /></a></div>
+							<div class="logo_footer"><a href="#"><img src="/Logo/Logo2.svg" alt="" /></a></div>
 							<div class="desc_info">
 								<p class="txt_info">We are a team of designers and developers that create high
 									quality Magento, Prestashop, Opencart.</p>
 								<div class="need_help">
 									<p>NEED HELP?</p>
-									<p class="phone">(+800) 345 678, (+800) 123 456</p>
+									<p class="phone">+91 7356122587</p>
 								</div>
 							</div>
 						</div>
 
-						<div class="col-footer social_follow ">
-							<ul>
-								<li class="facebook"><a href="https://www.facebook.com/posthemes">Facebook</a></li>
-								<li class="twitter"><a href="https://twitter.com/posthemes">Twitter</a>
-								</li>
-								<li class="youtube"><a href="https://www.youtube.com/user/posthemes">YouTube</a></li>
-								<li class="googleplus"><a
-										href="https://plus.google.com/100616268634541521861/posts">Google +</a></li>
-								<li class="instagram"><a href="https://www.instagram.com/posthemes9234">Instagram</a>
-								</li>
-							</ul>
-						</div>
+
 
 
 					</div>
@@ -926,8 +666,7 @@
 </main>
 <div class="back-top"><a href="#" class="back-top-button"></a></div>
 
-<script type="text/javascript"
-	src="http://demo.posthemes.com/pos_ecolife_fashion/themes/theme_ecolife_fashion1/assets/cache/bottom-0c8d8d14.js"></script>
+<script type="text/javascript" src="/javascripts/productview.js"></script>
 
 
 

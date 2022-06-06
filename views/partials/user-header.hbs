@@ -13,7 +13,7 @@
                 aria-label="Language dropdown">
                 <img src="http://demo.posthemes.com/pos_ecolife_fashion/img/l/1.jpg" alt="" width="16" height="11" />
                 <span class="expand-more">English</span>
-                <i class="material-icons">expand_more</i>
+                <i class="material-icons"></i>
               </button>
               <ul class="dropdown-menu" aria-labelledby="language-selector-label">
                 <li class="current">
@@ -34,7 +34,7 @@
                 aria-label="Language dropdown">
                 <img src="http://demo.posthemes.com/pos_ecolife_fashion/img/l/1.jpg" alt="" width="16" height="11" />
                 <span class="expand-more">English</span>
-                <i class="material-icons">expand_more</i>
+                <i class="material-icons"></i>
               </button>
               <ul class="dropdown-menu" aria-labelledby="language-selector-label">
                 <li class="current">
@@ -58,7 +58,7 @@
               <button data-target="#" data-toggle="dropdown" class=" btn-unstyle" aria-haspopup="true"
                 aria-expanded="false" aria-label="Currency dropdown">
                 <span class="expand-more _gray-darker">INR ₹</span>
-                <i class="material-icons">expand_more</i>
+                <i class="material-icons"></i>
               </button>
               <ul class="dropdown-menu" aria-labelledby="currency-selector-label">
                 <li>
@@ -97,14 +97,14 @@
             <div class="currency-selector localiz_block dropdown js-dropdown">
               <button data-target="#" data-toggle="dropdown" class=" btn-unstyle hidden-md-down">
                 <span class="expand-more">Setting</span>
-                <i class="material-icons">expand_more</i>
+                <i class="material-icons"></i>
               </button>
               <button data-target="#" data-toggle="dropdown" class=" btn-unstyle hidden-lg-up">
                 <i class="ion-ios-contact"></i>
               </button>
               <ul class="dropdown-menu">
                 <li>
-                  <a href="loginfd9a.html" rel="nofollow" class="dropdown-item">My account</a>
+                  <a href="/user-profile" rel="nofollow" class="dropdown-item">My account</a>
                 </li>
                 <li>
                 <li>
@@ -189,8 +189,9 @@
 
           <div id="_desktop_cart_block">
             <div class="blockcart cart-preview d-flex align-items-center" data-cartitems="0">
-              <div class="button_cart">
-                <a rel="nofollow" href="/cart" class="desktop hidden-md-down">
+              {{!-- <div class="button_cart">
+                <a rel="nofollow" href="/cart">
+                  <i class="fa-solid fa-basket-shopping-simple"></i>
                   <span class="item_count" id="carrt-count">{{cartCount}}</span>
                   <span></span>
 
@@ -199,6 +200,15 @@
                 <a rel="nofollow" href="/cart" class="mobile hidden-lg-up">
                   <span class="item_count">0</span>
                 </a>
+              </div> --}}
+              <div id="_desktop_wishtlist">
+                <div class="wishtlist_top">
+                  <a class="" href="/cart">
+                   <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-wishlist-number" id="carrt-count">{{cartCount}}</span>
+                    {{!-- (<span class="cart-wishlist-number">0</span>) --}}
+                  </a>
+                </div>
               </div>
               {{#if user}}
               <div class="btn btn-warning rounded">
@@ -241,28 +251,7 @@
               var baseDir = 'http://demo.posthemes.com/pos_ecolife_fashion/'; 
             </script>
             <!-- pos search module TOP -->
-            <div id="_desktop_search_category">
-              <div class="dropdown js-dropdown">
-                <span class="search-icon" data-toggle="dropdown"><i class="ion-ios-search-strong"></i></span>
-                <div id="pos_search_top" class="dropdown-menu">
-                  <div id="searchbox" class="form-inline form_search "
-                    data-search-controller-url="/pos_ecolife_fashion/modules/possearchproducts/SearchProducts.php">
-                    <label for="pos_query_top">
-                      <!-- image on background -->
-                    </label>
-                    <input type="hidden" name="controller" value="search" disabled>
-                    <div class="pos_search form-group">
-
-                    </div>
-                    <input type="text" name="s" value="" placeholder="Enter your search key ... " id="pos_query_top"
-                      class="search_query form-control ac_input" disabled>
-                    <button type="submit" class="btn btn-default search_submit">
-                      <i class="ion-ios-search-strong"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
 
             <!-- /pos search module TOP -->
 
@@ -477,16 +466,14 @@
 
               <li class=" menu-item menu-item34   ">
 
-                <a data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="On progress" style="cursor: not-allowed;">
+                <a data-bs-toggle="tooltip" data-bs-placement="bottom" title="On progress" style="cursor: not-allowed;">
                   <span>About Us</span>
                 </a>
               </li>
 
               <li class=" menu-item menu-item35   ">
 
-                <a data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="On progress" style="cursor: not-allowed;">
+                <a data-bs-toggle="tooltip" data-bs-placement="bottom" title="On progress" style="cursor: not-allowed;">
 
                   <span>Contact us</span>
                 </a>

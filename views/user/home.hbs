@@ -146,15 +146,24 @@
                             </a>
 
                             <ul class="add-to-links">
-                              <li class="cart">
+                              {{!-- <li class="cart">
                                 <div class="product-add-to-cart">
                                 <a class="addToWishlist wishlistProd_17" id="Wishlist007" title="Add to wishlist" data-rel="17"
                                   onclick="addToWishList('{{this._id}}')">
+                                  <i class="fa-solid fa-heart"></i>
                                   Add to wishlist
                                 </a>
                                 </div>
+                              </li> --}}
+                              <li class="cart">
+                                <div class="product-add-to-cart">
+                                  <button class="rounded-circle "
+                                    onclick="addToWishList('{{this._id}}')" style="width: 40px; height: 40px;">
+                                  <i class="fa-regular fa-heart"></i>
+                                  </button>
+                                </div>
                               </li>
-                              <li class="">
+                              {{!-- <li class="">
                                 <div class="product-add-to-cart">
                                   <a class="quick_view" href="/product-view?id={{this._id}}" title="Quick view">
                                     <i class="fa-regular fa-magnifying-glass"></i>
@@ -162,12 +171,12 @@
                                   </a>
                                 </div>
 
-                              </li>
+                              </li> --}}
                               <li class="cart">
                                 <div class="product-add-to-cart">
-                                  <button class="button ajax_add_to_cart_button add-to-cart btn-default"
-                                    onclick="addToCart('{{this._id}}')">
-                                    <i class="fa fa-shopping-cart"></i> Add to cart
+                                  <button class="rounded-circle "
+                                    onclick="addToCart('{{this._id}}')" style="width: 40px; height: 40px;">
+                                    <i class="fa fa-shopping-cart"></i>
                                   </button>
                                 </div>
                               </li>
@@ -189,22 +198,7 @@
                               </a></h3>
 
 
-                            <div class="hook-reviews">
-                              <div class="comments_note" itemprop="aggregateRating" itemscope itemtype="">
-                                <div class="star_content clearfix">
-                                  <div class="star star_on"></div>
-                                  <div class="star star_on"></div>
-                                  <div class="star star_on"></div>
-                                  <div class="star star_on"></div>
-                                  <div class="star star_on"></div>
-                                  <meta itemprop="worstRating" content="0" />
-                                  <meta itemprop="ratingValue" content="5" />
-                                  <meta itemprop="bestRating" content="5" />
-                                </div>
-                                <span class="nb-comments"><span itemprop="reviewCount">1</span> Review(s)</span>
-                              </div>
-
-                            </div>
+                           
 
 
                             <div class="product-price-and-shipping">
@@ -2949,7 +2943,7 @@
 <div class="back-top"><a href="#" class="back-top-button"></a></div>
 
 <script type="text/javascript"
-  src="http://demo.posthemes.com/pos_ecolife_fashion/themes/theme_ecolife_fashion1/assets/cache/bottom-e7e67c14.js"></script>
+  src="/javascripts/homesomthing.js"></script>
 
 
 

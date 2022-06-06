@@ -11,7 +11,6 @@ let flash = require("connect-flash");
 let helpers = require("handlebars-helpers")();
 let adminRouter = require("./routes/admin");
 let usersRouter = require("./routes/users");
-let pdfRouter = require('./public/javascripts/pdf')
 
 require('dotenv').config()
 
@@ -56,7 +55,6 @@ app.use(flash());
 
 app.use("/admin", adminRouter);
 app.use("/", usersRouter);
-app.use('/pdf', pdfRouter)
 const { error } = require("console");
 
 //db connect

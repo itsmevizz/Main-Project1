@@ -98,7 +98,7 @@ router.post("/user-login", (req, res) => {
           if (response.status) {
             var Number = response.Number;
             var Name = response.Name;
-            console.log(Name);
+            req.flash.userData = response.user
             client.verify
             .services(config.serviceSID)
             .verifications
@@ -111,7 +111,7 @@ router.post("/user-login", (req, res) => {
             })
             // res.redirect("/");
             // req.session.user = response.user;
-            // req.flash.Name = Name;
+            req.flash.Name = Name;
             // res.redirect("/");
           } else {
             req.flash.loginErr = "Invallid Email or Password";
@@ -155,7 +155,6 @@ router.get("/otp", (req, res) => {
 
 router.post("/otp-varify", (req, res) => {
   var Number = req.query.Number;
-  var Name = req.query.Name;
   console.log(Number);
   var otp = req.body.Number;
   var out = otp.join("");
@@ -169,7 +168,9 @@ router.post("/otp-varify", (req, res) => {
     })
     .then((data) => {
       if (data.status == "approved") {
-        req.session.user = Name;
+        const user = req.flash.userData
+        req.session.user = user
+        req.flash.userData = null
         res.redirect("/");
         req.flash.Number = null;
       } else {
@@ -217,6 +218,8 @@ router.get("/cart", async (req, res) => {
   cartCount = await userHelpers.getCartCount(req.session.user?._id);
   wishlistCount = await userHelpers.getWishlistCount(req.session.user?._id);
   let wallet = await userHelpers.walletDtls(req.session.user?._id).catch(() => { console.log('wallet= 0'); })
+  console.log(totalAmt);
+  console.log(wallet);
   if (totalAmt > wallet) {
     amountPayable = totalAmt - wallet
   } else {
@@ -601,6 +604,7 @@ router.post('/remove-coupon', (req, res) => {
 // Referral generator
 let referralCodeGenerator = require('referral-code-generator')
 router.post('/referral', (req, res) => {
+  console.log('Here');
   let name = req.flash.Name
   let length = parseInt(name.length + 8)
   let referrall = 'referrall'

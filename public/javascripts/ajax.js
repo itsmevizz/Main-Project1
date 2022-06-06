@@ -649,7 +649,7 @@ function referralGenerate(){
     method:'post',
     success:(response)=>{
       let referral =document.getElementById('copyText')
-      referral.value="http://localhost:3000/user-signUp?referral="+response
+      referral.value="http://itsmevizz/user-signUp?referral="+response
     }
   })
 }

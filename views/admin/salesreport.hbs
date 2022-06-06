@@ -236,26 +236,39 @@
                   <th>Name</th>
                   <th>Quantity</th>
                   <th>Price</th>
+                  <th>Pay method</th>
                   <th>Date</th>
-
                 </tr>
               </thead>
               <tbody class="table-border-bottom-0">
                 {{#each orders}}
                 <tr>
                   <td>{{inc @index}}</td>
-                  <td>{{this.products.Name}}</td>
+                  <td>{{this.products}}</td>
                   <td>{{this.quantity}}</td>
-                  <td>{{this.products.Price}}</td>
+                  <td>{{this.productPrice}}</td>
+                  <td>{{this.PayMethod}}</td>
                   <td>{{moment this.date format="DD-MM-YYYY"}}</td>
                 </tr>
                 {{/each}}
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>Total: {{total}}</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
               </tbody>
               <hr>
-              <div class="d-flex justify-content-end me-5 mt-1 align-items-center">
-                <h5 class="me-2">Total</h5>
-                <h4>₹{{orders.[0].totalAmount}}</h4>
-              </div>
             </table>
           </div>
         </div>
