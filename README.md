@@ -1,7 +1,7 @@
 # E-commerce-Shoping-cart
 
 1st Install Express
-***npm i express***
+***npm install***
 
 Then simpily run the server using
 ***nodemon server.js***
